@@ -6,8 +6,76 @@
 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
 	<script src="js/jquery-1.9.1.min.js"></script>
 	<script src="js/bootstrap.js"></script>
+	<script>
+	$(document).ready(function(){
+		$('#value').html(" ");
+		var array_outer = [];
+
+		$('#createTeam').click(function () {
+		var array_inner = [];
+
+				
+			   $(".team_inputs").each(function() { 
+			   		array_inner.push($(this).val());
+
+			   });
+
+			   array_outer.push(array_inner);
+			   $('#value').html("<p>" + array_outer[1][2] + "</p>"); 
+			  
+		});
+		
+	});
+	</script>
 </head>
 <body>
+	<form class="form-horizontal" style="margin-top: 20px;">
+	  <div class="control-group">
+	    <label class="control-label" for="teamName">Team Name</label>
+	    <div class="controls">
+	      <input type="text" class="team_inputs" id="teamName" placeholder="team name">
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="mgr_fname">Manager's First Name</label>
+	    <div class="controls">
+	      <input type="text" class="team_inputs" id="mgr_fname" placeholder="first name" >
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
+	    <div class="controls">
+	      <input type="text" class="team_inputs" id="mgr_lname" placeholder="last name">
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="phone">Phone Number</label>
+	    <div class="controls">
+	      <input type="text" id="phone" class="team_inputs" placeholder="phone number">
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="sponsor">Team Sponsor</label>
+	    <div class="controls">
+	      <input type="text" class="team_inputs" id="sponsor" placeholder="team sponsor">
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="zip">Zip Code</label>
+	    <div class="controls">
+	      <input type="text" class="team_inputs" id="zip" placeholder="zip code" >
+	    </div>
+	  </div>
+	  	  <div class="control-group">
+	    <div class="controls">
+	      <button id="createTeam" type="submit" class="btn" onclick="return false">Submit</button>
+	    </div>
+	  </div>
+	</form>
+	<div id="value">
+
+	</div>
+
 
 </body>
 </html>
