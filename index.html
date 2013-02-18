@@ -8,73 +8,96 @@
 	<script src="js/bootstrap.js"></script>
 	<script>
 	$(document).ready(function(){
+		//clears #value (test) element of previous contents.
 		$('#value').html(" ");
-		var array_outer = [];
+		//array storing individual team arrays.
+		var league_array = [];
 
 		$('#createTeam').click(function () {
-		var array_inner = [];
+		//array storing individual team attributes on click event	
+		var team_array = [];
 
-				
+			   //loops through inputs...
 			   $(".team_inputs").each(function() { 
-			   		array_inner.push($(this).val());
+			   		//...pushing values into team_array.
+			   		team_array.push($(this).val());
 
 			   });
+			   //pushes team array into league array...
+			   league_array.push(team_array);
+			   //hide modal on submit...
+			   $('#create_team').modal('hide');
+			   //clears form on close.
+    		   $(this).closest('form').find("input[type=text], textarea").val(""); 
 
-			   array_outer.push(array_inner);
-			   $('#value').html("<p>" + array_outer[1][2] + "</p>"); 
+			   
 			  
 		});
+		//simple function to test storage of data
+		$('#test').click(function(){
+		$('#value').html("<p>" + league_array[0][2] + "</p>"); 
+		})
 		
 	});
 	</script>
 </head>
 <body>
-	<form class="form-horizontal" style="margin-top: 20px;">
-	  <div class="control-group">
-	    <label class="control-label" for="teamName">Team Name</label>
-	    <div class="controls">
-	      <input type="text" class="team_inputs" id="teamName" placeholder="team name">
-	    </div>
-	  </div>
-	  <div class="control-group">
-	    <label class="control-label" for="mgr_fname">Manager's First Name</label>
-	    <div class="controls">
-	      <input type="text" class="team_inputs" id="mgr_fname" placeholder="first name" >
-	    </div>
-	  </div>
-	  <div class="control-group">
-	    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
-	    <div class="controls">
-	      <input type="text" class="team_inputs" id="mgr_lname" placeholder="last name">
-	    </div>
-	  </div>
-	  <div class="control-group">
-	    <label class="control-label" for="phone">Phone Number</label>
-	    <div class="controls">
-	      <input type="text" id="phone" class="team_inputs" placeholder="phone number">
-	    </div>
-	  </div>
-	  <div class="control-group">
-	    <label class="control-label" for="sponsor">Team Sponsor</label>
-	    <div class="controls">
-	      <input type="text" class="team_inputs" id="sponsor" placeholder="team sponsor">
-	    </div>
-	  </div>
-	  <div class="control-group">
-	    <label class="control-label" for="zip">Zip Code</label>
-	    <div class="controls">
-	      <input type="text" class="team_inputs" id="zip" placeholder="zip code" >
-	    </div>
-	  </div>
-	  	  <div class="control-group">
-	    <div class="controls">
-	      <button id="createTeam" type="submit" class="btn" onclick="return false">Submit</button>
-	    </div>
-	  </div>
-	</form>
-	<div id="value">
-
-	</div>
+	<a href="#myModal" role="button" class="btn" data-target="#create_team" data-toggle="modal">Create New Team</a>	
+	<button id="test" type="submit" class="btn" onclick="return false">test</button>
+	<div id="create_team" class="modal hide fade">
+		<div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		    <h3>Contact Form</h3>
+		</div>
+		<div class="modal-body">
+			<form class="form-horizontal" style="margin-top: 20px;">
+			  <div class="control-group">
+			    <label class="control-label" for="teamName">Team Name</label>
+			    <div class="controls">
+			      <input type="text" class="team_inputs" id="teamName" placeholder="team name">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="mgr_fname">Manager's First Name</label>
+			    <div class="controls">
+			      <input type="text" class="team_inputs" id="mgr_fname" placeholder="first name" >
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
+			    <div class="controls">
+			      <input type="text" class="team_inputs" id="mgr_lname" placeholder="last name">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="phone">Phone Number</label>
+			    <div class="controls">
+			      <input type="text" id="phone" class="team_inputs" placeholder="phone number">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="sponsor">Team Sponsor</label>
+			    <div class="controls">
+			      <input type="text" class="team_inputs" id="sponsor" placeholder="team sponsor">
+			    </div>
+			  </div>
+			  <div class="control-group">
+			    <label class="control-label" for="zip">Zip Code</label>
+			    <div class="controls">
+			      <input type="text" class="team_inputs" id="zip" placeholder="zip code" >
+			    </div>
+			  </div>
+			  	  <div class="control-group">
+			    <div class="controls">
+			      <button id="createTeam" type="submit" class="btn" onclick="return false">Submit</button>
+			    </div>
+			  </div>
+			</form>
+		</div>
+	</div>	
+<!-- <button id="test" type="submit" class="btn" onclick="return false">test</button> -->
+<div id="value">
+</div>
 
 
 </body>
