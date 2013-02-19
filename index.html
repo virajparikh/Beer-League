@@ -70,8 +70,10 @@
 			   $(".team_inputs").each(function() { 
 			   		//...pushing values into team_array.
 			   		team_array.push($(this).val());
+			   		});
 
-			   });
+			   team_array.push (0, 0);
+			   
 			   //pushes team array into league array...
 			   league_array.push(team_array);
 			   //hide modal on submit...
@@ -80,20 +82,42 @@
 			   //clears form on close.
     		   $(this).closest('form').find("input[type=text], textarea").val("");
 
+    		   var win_per; 
+    		   win_per = team_array[6]/(team_array[6] + team_array[7]);
+
+    		   $('<tr><td>' + team_array[0] + '</td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+
 			   
 			  
 		});
 		//simple function to test storage of data
 		$('#test').click(function(){
-		$('#value').html("<p>" + league_array[0][2] + "</p>"); 
+		$('#value').html("<p>" + league_array[1] + "</p>"); 
 		})
 		
 	});
 	</script>
+	<!-- pdeudo code tasklist:
+	A) set up mymodal button content to create modal content according to if/else statement -
+	if array length = 8, sorry, full, else, team form.
+	B) on submit, append a table row formatted with data
+		b) create/append table row
+		c) calculate win % -->
 </head>
 <body>
-	<a href="#myModal" role="button" class="btn" data-target="#create_team" data-toggle="modal">Create New Team</a>	
-	<button id="test" type="submit" class="btn" onclick="return false">test</button>
+	<div class="container">
+		<div class="row-fluid" style="text-align: center;">
+			<h1>Standings</h1>
+		</div>
+		<div class="row-fluid">
+	<table id="standings" class="span10 offset1">
+		<tr><th>Team</th><th>Wins</th><th>Losses</th><th>Win %</th></tr>
+	</table>
+</div> <!-- end table row -->
+<div class="row-fluid">
+	<a href="#myModal" role="button" class="btn offset1 top_bump" data-target="#create_team" data-toggle="modal">Create New Team</a>	
+	<button id="test" type="submit" class="btn top_bump" onclick="return false">test</button>
+</div> <!-- end button row -->
 	<div id="create_team" class="modal hide fade">
 		<div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
