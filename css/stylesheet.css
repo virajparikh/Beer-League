@@ -5,9 +5,29 @@ label.valid {
   display: inline-block;
   text-indent: -9999px;
 }
+
 label.error {
   font-weight: bold;
   color: red;
   padding: 2px 8px;
   margin-top: 2px;
 }
+
+.top_bump
+{
+	margin-top: 40px;
+}
+
+#standings 
+{
+	margin-top: 20px;
+}
+
+#standings, th, td
+{
+	border: 1px solid black;
+	padding: 10px 0;
+	text-align: center;
+}
+
+ 
