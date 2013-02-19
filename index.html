@@ -10,7 +10,14 @@
 	<script>
 	$(document).ready(function(){
 
-		$("#modal_form").validate({
+		//resets form validation on opening.
+		$('#create_team').click( function(){
+			$('.control-group').removeClass('success error');
+			validate.resetForm();
+		});
+
+
+		var validate = $("#modal_form").validate({
 			  rules: {
 			    teamName: {
 			      minlength: 2,
@@ -25,20 +32,18 @@
 			      required: true
 			    },
 			    phone: {
-			      minlength: 10,
-			      maxlength: 10,
 			      digits: true,
-			      required: true
+			      required: true,
+			      rangelength: [10, 10]
 			    },
 			    sponsor: {
 			      minlength: 2,
 			      required: true
 			    },
-			    zip: {
-			      minlength: 5,
-			      maxlength: 5,
+			    zip: {			 
 			      digits: true,
-			      required: true
+			      required: true,
+			      rangelength: [5, 5]
 			    }
 			  },
 			  highlight: function(element) {
@@ -50,6 +55,7 @@
 			    .closest('.control-group').removeClass('error').addClass('success');
 			  }
 		});
+
 
 		//clears #value (test) element of previous contents.
 		$('#value').html(" ");
@@ -70,8 +76,9 @@
 			   league_array.push(team_array);
 			   //hide modal on submit...
 			   $('#create_team').modal('hide');
+
 			   //clears form on close.
-    		   $(this).closest('form').find("input[type=text], textarea").val(""); 
+    		   $(this).closest('form').find("input[type=text], textarea").val("");
 
 			   
 			  
