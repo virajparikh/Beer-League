@@ -6,8 +6,51 @@
 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
 	<script src="js/jquery-1.9.1.min.js"></script>
 	<script src="js/bootstrap.js"></script>
+	<script src="js/jquery.validate.js"></script>
 	<script>
 	$(document).ready(function(){
+
+		$("#modal_form").validate({
+			  rules: {
+			    teamName: {
+			      minlength: 2,
+			      required: true
+			    },
+			    mgr_fname: {
+			      minlength: 2,
+			      required: true
+			    },
+			    mgr_lname: {
+			      minlength: 2,
+			      required: true
+			    },
+			    phone: {
+			      minlength: 10,
+			      maxlength: 10,
+			      digits: true,
+			      required: true
+			    },
+			    sponsor: {
+			      minlength: 2,
+			      required: true
+			    },
+			    zip: {
+			      minlength: 5,
+			      maxlength: 5,
+			      digits: true,
+			      required: true
+			    }
+			  },
+			  highlight: function(element) {
+			    $(element).closest('.control-group').removeClass('success').addClass('error');
+			  },
+			  success: function(element) {
+			    element
+			    .text('OK!').addClass('valid')
+			    .closest('.control-group').removeClass('error').addClass('success');
+			  }
+		});
+
 		//clears #value (test) element of previous contents.
 		$('#value').html(" ");
 		//array storing individual team arrays.
@@ -50,41 +93,41 @@
 		    <h3>Contact Form</h3>
 		</div>
 		<div class="modal-body">
-			<form class="form-horizontal" style="margin-top: 20px;">
+			<form id="modal_form" class="form-horizontal" style="margin-top: 20px;">
 			  <div class="control-group">
 			    <label class="control-label" for="teamName">Team Name</label>
 			    <div class="controls">
-			      <input type="text" class="team_inputs" id="teamName" placeholder="team name">
+			      <input type="text" class="team_inputs" id="teamName" name="teamName" placeholder="Da Bears">
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="mgr_fname">Manager's First Name</label>
 			    <div class="controls">
-			      <input type="text" class="team_inputs" id="mgr_fname" placeholder="first name" >
+			      <input type="text" class="team_inputs" id="mgr_fname" name="mgr_fname" placeholder="Ex: Jimbo" >
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
 			    <div class="controls">
-			      <input type="text" class="team_inputs" id="mgr_lname" placeholder="last name">
+			      <input type="text" class="team_inputs" id="mgr_lname" name="mgr_lname" placeholder="Ex: Jones">
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="phone">Phone Number</label>
 			    <div class="controls">
-			      <input type="text" id="phone" class="team_inputs" placeholder="phone number">
+			      <input type="text" id="phone" class="team_inputs" name="phone" placeholder="Numbers only. Ex: 1234567890">
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="sponsor">Team Sponsor</label>
 			    <div class="controls">
-			      <input type="text" class="team_inputs" id="sponsor" placeholder="team sponsor">
+			      <input type="text" class="team_inputs" id="sponsor" name="sponsor" placeholder="Ex: Adidas">
 			    </div>
 			  </div>
 			  <div class="control-group">
 			    <label class="control-label" for="zip">Zip Code</label>
 			    <div class="controls">
-			      <input type="text" class="team_inputs" id="zip" placeholder="zip code" >
+			      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="Ex: 12345" >
 			    </div>
 			  </div>
 			  	  <div class="control-group">
