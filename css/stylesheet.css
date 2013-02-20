@@ -13,6 +13,12 @@ label.error {
   margin-top: 2px;
 }
 
+a 
+{
+	text-decoration: none;
+	color: black;
+}
+
 .top_bump
 {
 	margin-top: 40px;
@@ -23,11 +29,20 @@ label.error {
 	margin-top: 20px;
 }
 
-#standings, th, td
+#standings th, #standings td
 {
 	border: 1px solid black;
 	padding: 10px 0;
 	text-align: center;
 }
+
+#contact_pop td
+{
+	border: 0;
+	padding: 5px 5px;
+}
+
+
+
 
  
