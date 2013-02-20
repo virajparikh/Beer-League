@@ -56,12 +56,6 @@
 			  }
 		});
 
-		$('.tooltip-inner').css('background-color', 'rgba(0,0,0,0.8)');
-   		// $('.tooltip.top .tooltip-arrow').css('border-top-color', color);
-   		// $('.tooltip.right .tooltip-arrow').css('border-right-color', color);
-    	// $('.tooltip.left .tooltip-arrow').css('border-left-color', color);
-   		$('.tooltip.bottom .tooltip-arrow').css('border-bottom-color', 'rgba(0,0,0,0.8)');
-
 		//clears #value (test) element of previous contents.
 		$('#value').html(" ");
 		//array storing individual team arrays.
@@ -90,7 +84,7 @@
     		   var win_per; 
     		   win_per = team_array[6]/(team_array[6] + team_array[7]);
 
-    		   $('<tr><td><a rel="popover" data-toggle="popover"  data-original-title="<table id=\'contact_pop\'><tr><td>Team Name:</td><td>' + team_array[0] + '</td></tr><tr><td>Manager First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Manager Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+    		   $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 
 			     
 			  
@@ -112,7 +106,7 @@
 <body>
 	<div class="container">
 		<div class="row-fluid" style="text-align: center;">
-			<h1>Standings</h1>
+			<h1>Beer League Standings</h1>
 		</div>
 		<div class="row-fluid">
 	<table id="standings" class="span10 offset1">
@@ -151,7 +145,7 @@
 			  <div class="control-group">
 			    <label class="control-label" for="phone">Phone Number</label>
 			    <div class="controls">
-			      <input type="text" id="phone" class="team_inputs" name="phone" placeholder="Numbers only. Ex: 1234567890">
+			      <input type="text" id="phone" class="team_inputs" name="phone" placeholder="Ex: 1234567890">
 			    </div>
 			  </div>
 			  <div class="control-group">
