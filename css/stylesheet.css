@@ -29,7 +29,7 @@ a
 	margin-top: 20px;
 }
 
-#standings th, #standings td
+#mytable th, #mytable td
 {
 	border: 1px solid black;
 	padding: 10px 0;
@@ -38,14 +38,22 @@ a
 
 #contact_pop td
 {
+	font-size: 1em!important;
 	border: 0;
 	padding: 5px 5px;
 }
 
-th
-{ 
-	background-color: rgb(200,200,200);
+#mytable td
+{
+	font-size: 1.6em;
 }
+
+#mytable th
+{ 
+	font-size: 2em;
+}
+
+
 
 
 
