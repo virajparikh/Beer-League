@@ -4,104 +4,124 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css">
 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="js/jquery-1.9.1.min.js"></script>
 	<script src="js/bootstrap.js"></script>
 	<script src="js/jquery.validate.js"></script>
+	<script src="js/jquery.tablesorter.min.js"></script> 
 	<script>
 	$(document).ready(function(){
 
-		//resets form validation on opening.
-		$('#create_team').click( function(){
-			$('.control-group').removeClass('success error');
-			validate.resetForm();
-		});
-
-
 		var validate = $("#modal_form").validate({
-			  rules: {
+			rules: {
 			    teamName: {
 			      minlength: 2,
 			      required: true
-			    },
+				},
 			    mgr_fname: {
 			      minlength: 2,
 			      required: true
-			    },
+				},
 			    mgr_lname: {
 			      minlength: 2,
 			      required: true
-			    },
+				},
 			    phone: {
 			      digits: true,
 			      required: true,
 			      rangelength: [10, 10]
-			    },
+				},
 			    sponsor: {
 			      minlength: 2,
 			      required: true
-			    },
+				},
 			    zip: {			 
 			      digits: true,
 			      required: true,
 			      rangelength: [5, 5]
-			    }
-			  },
-			  highlight: function(element) {
+				}
+			},
+			highlight: function(element) {
 			    $(element).closest('.control-group').removeClass('success').addClass('error');
-			  },
-			  success: function(element) {
+			},
+			success: function(element) {
 			    element
 			    .text('OK!').addClass('valid')
 			    .closest('.control-group').removeClass('error').addClass('success');
-			  }
+			}
 		});
+
+		$("#mytable").tablesorter(); 
 
 		//clears #value (test) element of previous contents.
 		$('#value').html(" ");
 		//array storing individual team arrays.
 		var league_array = [];
+		var row_counter = 0;
 
 		$('#createTeam').click(function () {
-		//array storing individual team attributes on click event	
-		var team_array = [];
+			//array storing individual team attributes on click event	
+			var team_array = [];
+			// increments counter used to assign appended row id's
+			row_counter++;
+		   
+			$(".team_inputs").each(function() { //loops through form inputs...
+			   	team_array.push($(this).val()); //...pushing values into team_array.
+			});
 
-			   //loops through inputs...
-			   $(".team_inputs").each(function() { 
-			   		//...pushing values into team_array.
-			   		team_array.push($(this).val());
-			   		});
-
-			   team_array.push (0, 0);
+			// team_array.push (0, 0); //pushes 0's into w/l slots in array
+			team_array.push (3, 5);
 			   
-			   //pushes team array into league array...
-			   league_array.push(team_array);
-			   //hide modal on submit...
-			   $('#create_team').modal('hide');
+			//pushes team array into league array...
+			league_array.push(team_array);
+			//hide modal on submit...
+			$('#create_team').modal('hide');
 
-			   //clears form on close.
-    		   $(this).closest('form').find("input[type=text], textarea").val("");
+			//clears form fields on submit/close.
+    		$(this).closest('form').find("input[type=text], textarea").val("");
 
-    		   var win_per; 
-    		   win_per = team_array[6]/(team_array[6] + team_array[7]);
+    		//variables used in calculating & displaying win %
+    		var raw_per, per_array, win_per;
+    		//calculates win percentage to 3 decimal places
+    		raw_per = (team_array[6]/(team_array[6] + team_array[7])).toFixed(3); 
 
-    		   $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+    		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
+    			per_array = raw_per.split('.');
+    			win_per = "." + per_array[1];
+    		}
 
-			     
-			  
-		});
+    		else { //if number is 1.000, display full number.
+    			win_per = raw_per;
+    		};
+    		//appends table row on submit. Contains popover content.
+    		$('<tr id="row' + row_counter + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+
+
+
+
+			//resets form validation on opening.   
+			validate.resetForm(); 
+			$('.control-group').removeClass('success error');
+
+			// let the plugin know that we made a update 
+	        $("#mytable").trigger("update"); 
+	        // set sorting column and direction, this will sort on the first and third column 
+	        var sorting = [[3,0]]; 
+	        // sort on the first column 
+	        $("#mytable").trigger("sorton",[sorting]); 
+	        return false; 
+		}); //end submit click function
+
 		//simple function to test storage of data
 		$('#test').click(function(){
-		$('#value').html("<p>" + league_array[1] + "</p>"); 
-		})
+			$('#value').html("<p>" + league_array[1] + "</p>"); 
+		});
 		
-	});
+	}); //end doc ready
 	</script>
 	<!-- pdeudo code tasklist:
-	A) set up mymodal button content to create modal content according to if/else statement -
-	if array length = 8, sorry, full, else, team form.
-	B) on submit, append a table row formatted with data
-		b) create/append table row
-		c) calculate win % -->
+	A) if array length = 8, sorry, full, else, team form. -->
+
 </head>
 <body>
 	<div class="container">
@@ -109,10 +129,14 @@
 			<h1>Beer League Standings</h1>
 		</div>
 		<div class="row-fluid">
-	<table id="standings" class="span10 offset1">
-		<tr><th>Team</th><th>Wins</th><th>Losses</th><th>Win %</th></tr>
-	</table>
-</div> <!-- end table row -->
+			<table id="mytable" class="tablesorter span10 offset1" cellspacing="1">
+				<thead>
+					<tr><th>Team</th><th>Wins</th><th>Losses</th><th>Win %</th></tr>
+				</thead>
+				<tbody id="standings">
+				</tbody>
+			</table>
+		</div> <!-- end table row -->
 <div class="row-fluid">
 	<a href="#myModal" role="button" class="btn offset1 top_bump" data-target="#create_team" data-toggle="modal">Create New Team</a>	
 	<button id="test" type="submit" class="btn top_bump" onclick="return false">test</button>
@@ -160,7 +184,7 @@
 			      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="Ex: 12345" >
 			    </div>
 			  </div>
-			  	  <div class="control-group">
+			  <div class="control-group">
 			    <div class="controls">
 			      <button id="createTeam" type="submit" class="btn" onclick="return false">Submit</button>
 			    </div>
@@ -173,12 +197,12 @@
 </div>
 <script type="text/javascript">
 
-$('body').popover({
- 		     selector: '[rel=popover]',
-  		     html:  true,
-  		     trigger: 'hover',
-  		     placement: 'bottom'
-  		 });
+	$('body').popover({
+ 		selector: '[rel=popover]',
+  		html:  true,
+  	    trigger: 'hover',
+  	    placement: 'bottom'
+  	});
 
 </script>
 
