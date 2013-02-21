@@ -12,19 +12,10 @@
 	<script>
 	$(document).ready(function(){
 
-<<<<<<< HEAD
-=======
+
 		//hide team limit alert upon load
 		$('.alert').hide();
 
-		//resets form validation on opening.
-		$('#create_team').click( function(){
-			$('.control-group').removeClass('success error');
-			validate.resetForm();
-		});
-
-
->>>>>>> 15c78c3394511a1f7641e8e8254223446e7282b5
 		var validate = $("#modal_form").validate({
 			rules: {
 			    teamName: {
@@ -85,6 +76,7 @@
 			   
 			//pushes team array into league array...
 			league_array.push(team_array);
+			console.log(league_array.length);
 			//hide modal on submit...
 			$('#create_team').modal('hide');
 
@@ -96,7 +88,6 @@
     		//calculates win percentage to 3 decimal places
     		raw_per = (team_array[6]/(team_array[6] + team_array[7])).toFixed(3); 
 
-<<<<<<< HEAD
     		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
     			per_array = raw_per.split('.');
     			win_per = "." + per_array[1];
@@ -108,12 +99,19 @@
     		//appends table row on submit. Contains popover content.
     		$('<tr id="row' + row_counter + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 
-
-
-
-			//resets form validation on opening.   
-			validate.resetForm(); 
+			//resets form validation on opening.    
 			$('.control-group').removeClass('success error');
+			validate.resetForm();
+
+
+
+	        //implement team limit constraint within conditional
+			if (league_array.length === 2) {
+				$('#create_team_button').click(function() {
+					$('.alert').show();
+					return false;
+				}); //end team limit click
+			};//end team limit if
 
 			// let the plugin know that we made a update 
 	        $("#mytable").trigger("update"); 
@@ -122,33 +120,13 @@
 	        // sort on the first column 
 	        $("#mytable").trigger("sorton",[sorting]); 
 	        return false; 
-		}); //end submit click function
 
-=======
-    		   $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');		     
+		}); //end submit click function		     
 
-			  //implement team limit constraint within conditional
-			  if (league_array.length === 8) {
-				  $('#create_team_button').click(function() {
-				  $('.alert').show();
-				  return false;
-				  });
-			  };
-
-		});
-
->>>>>>> 15c78c3394511a1f7641e8e8254223446e7282b5
-		
-<<<<<<< HEAD
 	}); //end doc ready
 	</script>
 	<!-- pdeudo code tasklist:
 	A) if array length = 8, sorry, full, else, team form. -->
-=======
-	});
-
-	</script>
->>>>>>> 15c78c3394511a1f7641e8e8254223446e7282b5
 
 </head>
 <body>
@@ -167,7 +145,6 @@
 		</div> <!-- end table row -->
 <div class="row-fluid">
 	<a href="#myModal" type="button" id="create_team_button" role="button" class="btn offset1 top_bump" data-target="#create_team" data-toggle="modal">Create New Team</a>	
-	<button id="test" type="submit" class="btn top_bump" onclick="return false">test</button>
 </div> <!-- end button row -->
 	<div id="create_team" class="modal hide fade">
 		<div class="modal-header">
@@ -220,9 +197,6 @@
 			</form>
 		</div>
 	</div>	
-<!-- <button id="test" type="submit" class="btn" onclick="return false">test</button> -->
-<div id="value">
-</div>
 <script type="text/javascript">
 
 	$('body').popover({
