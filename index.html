@@ -12,6 +12,19 @@
 	<script>
 	$(document).ready(function(){
 
+<<<<<<< HEAD
+=======
+		//hide team limit alert upon load
+		$('.alert').hide();
+
+		//resets form validation on opening.
+		$('#create_team').click( function(){
+			$('.control-group').removeClass('success error');
+			validate.resetForm();
+		});
+
+
+>>>>>>> 15c78c3394511a1f7641e8e8254223446e7282b5
 		var validate = $("#modal_form").validate({
 			rules: {
 			    teamName: {
@@ -53,8 +66,6 @@
 
 		$("#mytable").tablesorter(); 
 
-		//clears #value (test) element of previous contents.
-		$('#value').html(" ");
 		//array storing individual team arrays.
 		var league_array = [];
 		var row_counter = 0;
@@ -85,6 +96,7 @@
     		//calculates win percentage to 3 decimal places
     		raw_per = (team_array[6]/(team_array[6] + team_array[7])).toFixed(3); 
 
+<<<<<<< HEAD
     		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
     			per_array = raw_per.split('.');
     			win_per = "." + per_array[1];
@@ -112,15 +124,31 @@
 	        return false; 
 		}); //end submit click function
 
-		//simple function to test storage of data
-		$('#test').click(function(){
-			$('#value').html("<p>" + league_array[1] + "</p>"); 
+=======
+    		   $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');		     
+
+			  //implement team limit constraint within conditional
+			  if (league_array.length === 8) {
+				  $('#create_team_button').click(function() {
+				  $('.alert').show();
+				  return false;
+				  });
+			  };
+
 		});
+
+>>>>>>> 15c78c3394511a1f7641e8e8254223446e7282b5
 		
+<<<<<<< HEAD
 	}); //end doc ready
 	</script>
 	<!-- pdeudo code tasklist:
 	A) if array length = 8, sorry, full, else, team form. -->
+=======
+	});
+
+	</script>
+>>>>>>> 15c78c3394511a1f7641e8e8254223446e7282b5
 
 </head>
 <body>
@@ -138,7 +166,7 @@
 			</table>
 		</div> <!-- end table row -->
 <div class="row-fluid">
-	<a href="#myModal" role="button" class="btn offset1 top_bump" data-target="#create_team" data-toggle="modal">Create New Team</a>	
+	<a href="#myModal" type="button" id="create_team_button" role="button" class="btn offset1 top_bump" data-target="#create_team" data-toggle="modal">Create New Team</a>	
 	<button id="test" type="submit" class="btn top_bump" onclick="return false">test</button>
 </div> <!-- end button row -->
 	<div id="create_team" class="modal hide fade">
@@ -205,6 +233,11 @@
   	});
 
 </script>
+
+<div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Sorry!</strong> The team limit has been reached.
+</div>
 
 </body>
 </html>
