@@ -59,31 +59,96 @@
 
 		//array storing individual team arrays.
 		var league_array = [];
-		var row_counter = 0;
+		var win_per = 0;
+
+		// if (league_array.length > 0) {
+		// 	for(i=0; i<league_array.length - 1; i++) {
+		// 		$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + league_array[i][0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + league_array[i][1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + league_array[i][2] + '</td></tr><tr><td>Phone Number:</td><td>' + league_array[i][3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + league_array[i][4] + '</td></tr><tr><td>Zip:</td><td>' + league_array[i][5] +'</td></tr></table>">' + league_array[i][6] + '</a></td><td>' + league_array[i][7] + '</td><td>' + league_array[i][8] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+		// 	}
+		// }
 
 		$('#createTeam').click(function () {
+
 			//array storing individual team attributes on click event	
 			var team_array = [];
-			// increments counter used to assign appended row id's
-			row_counter++;
-		   
-			$(".team_inputs").each(function() { //loops through form inputs...
-			   	team_array.push($(this).val()); //...pushing values into team_array.
-			});
 
-			// team_array.push (0, 0); //pushes 0's into w/l slots in array
-			team_array.push (3, 5);
-			   
-			//pushes team array into league array...
-			league_array.push(team_array);
-			console.log(league_array.length);
-			//hide modal on submit...
-			$('#create_team').modal('hide');
+			//TEAMSAVE FUNCTION
+			teamSave(team_array);
+
+			//CLEARFORM FUNCTION
+    		clearForm();
+
+			//CALC FUNCTION
+    		calcPer(team_array);
+
+			//APPEND FUNCTION
+ 			printTeam(team_array);
+    		
+			//VALIDATE FUNCTION    		    
+			validateClear();  
+
+			//TEAM LIMIT FUNCTION
+			teamLimit();
+
+			//SORT TABLE FUNCTION
+			sortTable();
+
+		}); //end submit click function		     
+
+			//appends table row on submit. Contains popover content.
+
+			function teamSave(team_array){
+				$(".team_inputs").each(function() { //loops through form inputs...
+			   	team_array.push($(this).val()); //...pushing values into team_array.
+				});
+
+				// team_array.push (0, 0); //pushes 0's into w/l slots in array
+				team_array.push (3, 5);
+				   
+				//pushes team array into league array...
+				league_array.push(team_array);
+				console.log(league_array.length);
+		};
+
+			function printTeam(team_array){
+    		$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+			};
 
 			//clears form fields on submit/close.
-    		$(this).closest('form').find("input[type=text], textarea").val("");
+			function clearForm(){
+			$(".team_inputs").each(function(){
+				$(this).val("");
+				});
+			};
 
-    		//variables used in calculating & displaying win %
+			//implement team limit constraint within conditional
+			function teamLimit(){
+				if (league_array.length === 2) {
+					$('#create_team_button').click(function() {
+						$('.alert').show();
+						return false;
+					}); //end team limit click
+				};//end team limit if
+			};//end team limit function
+
+			//resets form validation on opening.
+			function validateClear(){
+				$('.control-group').removeClass('success error');
+				validate.resetForm();  
+			};
+
+			function sortTable(){
+			// let the plugin know that we made a update 
+	        $("#mytable").trigger("update"); 
+	        // set sorting column and direction, this will sort on the first and third column 
+	        var sorting = [[3,0]]; 
+	        // sort on the first column 
+	        $("#mytable").trigger("sorton",[sorting]); 
+	        return false; 
+			};
+
+			function calcPer(team_array){
+				//variables used in calculating & displaying win %
     		var raw_per, per_array, win_per;
     		//calculates win percentage to 3 decimal places
     		raw_per = (team_array[6]/(team_array[6] + team_array[7])).toFixed(3); 
@@ -92,34 +157,10 @@
     			per_array = raw_per.split('.');
     			win_per = "." + per_array[1];
     		}
-
     		else { //if number is 1.000, display full number.
     			win_per = raw_per;
     		};
-    		//appends table row on submit. Contains popover content.
-    		$('<tr id="row' + row_counter + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
-
-			//resets form validation on opening.    
-			$('.control-group').removeClass('success error');
-			validate.resetForm();     
-
-	        //implement team limit constraint within conditional
-			if (league_array.length === 2) {
-				$('#create_team_button').click(function() {
-					$('.alert').show();
-					return false;
-				}); //end team limit click
-			};//end team limit if
-
-			// let the plugin know that we made a update 
-	        $("#mytable").trigger("update"); 
-	        // set sorting column and direction, this will sort on the first and third column 
-	        var sorting = [[3,0]]; 
-	        // sort on the first column 
-	        $("#mytable").trigger("sorton",[sorting]); 
-	        return false; 
-
-		}); //end submit click function		     
+			};
 
 	}); //end doc ready
 
@@ -189,7 +230,7 @@
 			  </div>
 			  <div class="control-group">
 			    <div class="controls">
-			      <button id="createTeam" type="submit" class="btn" onclick="return false">Submit</button>
+			      <button id="createTeam" type="submit" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
 			    </div>
 			  </div>
 			</form>
