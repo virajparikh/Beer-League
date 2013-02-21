@@ -90,18 +90,18 @@
     		   $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');		     
 
 			  //implement team limit constraint within conditional
-			  	if (league_array.length == 2) {
-					$('#create_team_button').click(function() {
-						$('.alert').show();
-						return false;
-					});
-				};
+			  if (league_array.length === 8) {
+				  $('#create_team_button').click(function() {
+				  $('.alert').show();
+				  return false;
+				  });
+			  };
 
 		});
 
 		//simple function to test storage of data
 		$('#test').click(function(){
-		$('#value').html("<p>" + league_array[1] + "</p>" + league_array.length); 
+		$('#value').html("<p>" + league_array[1] + "</p>"); 
 		})
 		
 	});
