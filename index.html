@@ -13,13 +13,6 @@
 		//hide team limit alert upon load
 		$('.alert').hide();
 
-		//resets form validation on opening.
-		$('#create_team').click( function(){
-			$('.control-group').removeClass('success error');
-			validate.resetForm();
-		});
-
-
 		var validate = $("#modal_form").validate({
 			  rules: {
 			    teamName: {
@@ -59,8 +52,6 @@
 			  }
 		});
 
-		//clears #value (test) element of previous contents.
-		// $('#value').html(" ");
 		//array storing individual team arrays.
 		var league_array = [];
 
@@ -87,10 +78,14 @@
     		   var win_per; 
     		   win_per = team_array[6]/(team_array[6] + team_array[7]);
 
-    		   $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');		     
+    		   $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');	
+
+    		   //resets form validation
+    		  $('.control-group').removeClass('success error');
+				validate.resetForm();	     
 
 			  //implement team limit constraint within conditional
-			  if (league_array.length === 8) {
+			  if (league_array.length === 2) {
 				  $('#create_team_button').click(function() {
 				  $('.alert').show();
 				  return false;
@@ -99,11 +94,6 @@
 
 		});
 
-		//simple function to test storage of data
-		$('#test').click(function(){
-		$('#value').html("<p>" + league_array[1] + "</p>"); 
-		})
-		
 	});
 
 	</script>
