@@ -12,8 +12,14 @@
 	<script>
 	$(document).ready(function(){
 
+		var win_per = 0;
+
 		//hide team limit alert upon load
 		$('.alert').hide();
+
+		$.ajax({ type: 'GET', url: 'https://fantasybeerleague-zzz2p.backliftapp.com/backliftapp/team', success: function (data) {
+			printTeam(data);			
+		}});        
 
 		var validate = $("#modal_form").validate({
 			rules: {
@@ -56,73 +62,87 @@
 
 		$("#mytable").tablesorter(); 
 
-		//array storing individual team arrays.
-		var league_array = [];
-		var win_per = 0;
-
-		// if (league_array.length > 0) {
-		// 	for (var i = 0; i < league_array.length - 1; i++) {
-		// 		$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + league_array[i][0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + league_array[i][1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + league_array[i][2] + '</td></tr><tr><td>Phone Number:</td><td>' + league_array[i][3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + league_array[i][4] + '</td></tr><tr><td>Zip:</td><td>' + league_array[i][5] +'</td></tr></table>">' + league_array[i][0] + '</a></td><td>' + league_array[i][6] + '</td><td>' + league_array[i][7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
-		// 	}
-		// };
+		//array storing individual team arrays
 
 		$('#createTeam').click(function () {
 
 			//array storing individual team attributes on click event	
-			var team_array = [];
-		   
-			teamSave(team_array); //pushing team values into local > global arrays
 
-    		clearForm(); //clear form inputs
+			// validForm();
 
-    		teamLimit(); //sets team limit at 8
+			// teamSave(team_array); //pushing team values into local > global arrays
+  		
+			// calcPer(team_array); //calculate and format win percentage
 
-			calcPer(team_array); //calculate and format win percentage
+    		$.ajax({
+    			url: "https://fantasybeerleague-zzz2p.backliftapp.com/backliftapp/team",
+				type: "POST",
+				dataType: "json",
+				data: {
 
-    		printTeam(team_array);	//appends table row with team info
+				    "teamName": $('#teamName').val(),
+				    "firstName": $('#mgr_fname').val(),
+				    "lastName": $('#mgr_lname').val(),
+				    "phoneNumber": $('#phoneNumber').val(),
+				    "sponsor": $('#sponsor').val(),
+				    "zip": $('#zip').val(),
+				    "wins": 0,
+				    "losses": 0  	
+				},
+				success: function () {
+				    console.log(data);
+				    printTeam(data); //appends table row with team info
 
-			validateClear(); //clears validate status on form   
+				}
+				 
+			});
 
-			sortTable(); //loads sort table on empty table 
+			//clearForm(); //clear form inputs
+
+			//teamLimit(); //sets team limit at 8
+
+     		
+			// validateClear(); //clears validate status on form   
+
+			// sortTable(); //loads sort table on empty table 
 
 		}); //end submit click function	
 
-		function teamSave (team_array) {
-			$(".team_inputs").each(function() { //loops through form inputs...
-				team_array.push($(this).val()); //...pushing values into team_array.
+		function validForm() {
+			$('.control-group').each(function() {
+				if ($(this).hasClass('error')) {
+					validForm();
+				};
 			});
+		};	   
 
-			team_array.push (0, 0); //pushes 0's into w/l slots in array
-			// team_array.push (3, 5);
-			   
-			//pushes team array into league array...
-			league_array.push(team_array);
-		};
+		// function calcPer(team_array){
+		// 	//variables used in calculating & displaying win %
+  //   		var raw_per, per_array;
+  //   		raw_per = 0;
+  //   		per_array = 0;
+  //   		//calculates win percentage to 3 decimal places
+  //   		raw_per = (league_array[index].wins/(league_array[index].wins + league_array[index].losses)).toFixed(3); 
+  //   		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
+  //   			per_array = raw_per.split('.');
+  //   			win_per = "." + per_array[1];
+  //   		}
 
-		function calcPer(team_array){
-			//variables used in calculating & displaying win %
-    		var raw_per, per_array;
-    		raw_per = 0;
-    		per_array = 0;
-    		//calculates win percentage to 3 decimal places
-    		raw_per = (team_array[6]/(team_array[6] + team_array[7])).toFixed(3); 
-    		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
-    			per_array = raw_per.split('.');
-    			win_per = "." + per_array[1];
-    		}
+  //   		else if (isNaN(raw_per)) { //if raw_per isn't a number, write .000
+  //   			win_per = ".000";
+  //   		}
 
-    		else if (isNaN(raw_per)) { //if raw_per isn't a number, write .000
-    			win_per = ".000";
-    		}
-
-    		else { //if number is 1.000, display full number.
-    			win_per = "1.000";
-    		};
-		};
+  //   		else { //if number is 1.000, display full number.
+  //   			win_per = "1.000";
+  //   		};
+		// };
 
 		//appends table row on submit. Contains popover content. 
-		function printTeam(team_array){ 
-			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + team_array[0] + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + team_array[1] + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + team_array[2] + '</td></tr><tr><td>Phone Number:</td><td>' + team_array[3] + '</td></tr><tr><td>Team Sponsor:</td><td>' + team_array[4] + '</td></tr><tr><td>Zip:</td><td>' + team_array[5] +'</td></tr></table>">' + team_array[0] + '</a></td><td>' + team_array[6] + '</td><td>' + team_array[7] + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+		function printTeam(data){ 
+			$('#standings').html('');
+			for (var index = 0; index < data.length; index++) { 
+			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Mgr. First Name:</td><td>' + data[index].firstName + '</td></tr><tr><td>Mgr. Last Name:</td><td>' + data[index].lastName + '</td></tr><tr><td>Phone Number:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Team Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>.000</td></tr>').appendTo('#standings');
+				};
 		}; //end printTeam func
 
 		function clearForm(){
@@ -133,7 +153,7 @@
 
 		//limits league to 8 teams
 		function teamLimit(){
-			if (league_array.length === 1) {
+			if (league_array.length === 3) {
 				$('#create_team_button').click(function() {
 					$('.alert').show();
 					return false;
@@ -155,8 +175,7 @@
 	        var sorting = [0,0]; 
 	        //sort on the first column 
 	        $("#mytable").trigger("sorton", [sorting]); 
-	        return false;
-	        
+	        return false;	        
 		};
 
 	}); //end doc ready
@@ -209,7 +228,7 @@
 				  <div class="control-group">
 				    <label class="control-label" for="phone">Phone Number</label>
 				    <div class="controls">
-				      <input type="text" id="phone" class="team_inputs" name="phone" placeholder="Ex: 1234567890">
+				      <input type="text" id="phoneNumber" class="team_inputs" name="phone" placeholder="Ex: 1234567890">
 				    </div>
 				  </div>
 				  <div class="control-group">
@@ -226,7 +245,7 @@
 				  </div>
 				  <div class="control-group">
 				    <div class="controls">
-				      <button id="createTeam" type="submit" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
+				      <button id="createTeam" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
 				    </div>
 				  </div>
 				</form>
