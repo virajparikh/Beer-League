@@ -67,6 +67,7 @@
 		// };
 
 		$('#createTeam').click(function () {
+
 			//array storing individual team attributes on click event	
 			var team_array = [];
 		   
@@ -74,13 +75,13 @@
 
     		clearForm(); //clear form inputs
 
+    		teamLimit(); //sets team limit at 8
+
 			calcPer(team_array); //calculate and format win percentage
 
     		printTeam(team_array);	//appends table row with team info
 
 			validateClear(); //clears validate status on form   
-
-			teamLimit(); //sets team limit at 8
 
 			sortTable(); //loads sort table on empty table 
 
@@ -110,12 +111,12 @@
     			win_per = "." + per_array[1];
     		}
 
-    		else if (isNaN(raw_per)) {
+    		else if (isNaN(raw_per)) { //if raw_per isn't a number, write .000
     			win_per = ".000";
     		}
 
     		else { //if number is 1.000, display full number.
-    			win_per = raw_per;
+    			win_per = "1.000";
     		};
 		};
 
@@ -132,7 +133,7 @@
 
 		//limits league to 8 teams
 		function teamLimit(){
-			if (league_array.length === 8) {
+			if (league_array.length === 1) {
 				$('#create_team_button').click(function() {
 					$('.alert').show();
 					return false;
@@ -150,10 +151,10 @@
 		function sortTable() { 
 			// let the plugin know that we made a update 
 	        $("#mytable").trigger("update"); 
-	        // set sorting column and direction, this will sort on the first and third column 
-	        var sorting = [[3,0]]; 
-	        // sort on the first column 
-	        $("#mytable").trigger("sorton",[sorting]); 
+	        //set sorting column and direction, this will sort on the first and third column 
+	        var sorting = [0,0]; 
+	        //sort on the first column 
+	        $("#mytable").trigger("sorton", [sorting]); 
 	        return false;
 	        
 		};
@@ -177,67 +178,65 @@
 				</tbody>
 			</table>
 		</div> <!-- end table row -->
-<div class="row-fluid">
-	<a href="#myModal" type="button" id="create_team_button" role="button" class="btn offset1 top_bump" data-target="#create_team"  data-toggle="modal">Create New Team</a>	
-</div> <!-- end button row -->
-	<div id="create_team" class="modal hide fade">
-		<div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		    <h3>Contact Form</h3>
-		</div>
-		<div class="modal-body">
-			<form id="modal_form" class="form-horizontal" style="margin-top: 20px;">
-			  <div class="control-group">
-			    <label class="control-label" for="teamName">Team Name</label>
-			    <div class="controls">
-			      <input type="text" class="team_inputs" id="teamName" name="teamName" placeholder="Da Bears">
-			    </div>
-			  </div>
-			  <div class="control-group">
-			    <label class="control-label" for="mgr_fname">Manager's First Name</label>
-			    <div class="controls">
-			      <input type="text" class="team_inputs" id="mgr_fname" name="mgr_fname" placeholder="Ex: Jimbo" >
-			    </div>
-			  </div>
-			  <div class="control-group">
-			    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
-			    <div class="controls">
-			      <input type="text" class="team_inputs" id="mgr_lname" name="mgr_lname" placeholder="Ex: Jones">
-			    </div>
-			  </div>
-			  <div class="control-group">
-			    <label class="control-label" for="phone">Phone Number</label>
-			    <div class="controls">
-			      <input type="text" id="phone" class="team_inputs" name="phone" placeholder="Ex: 1234567890">
-			    </div>
-			  </div>
-			  <div class="control-group">
-			    <label class="control-label" for="sponsor">Team Sponsor</label>
-			    <div class="controls">
-			      <input type="text" class="team_inputs" id="sponsor" name="sponsor" placeholder="Ex: Adidas">
-			    </div>
-			  </div>
-			  <div class="control-group">
-			    <label class="control-label" for="zip">Zip Code</label>
-			    <div class="controls">
-			      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="Ex: 12345" >
-			    </div>
-			  </div>
-			  <div class="control-group">
-			    <div class="controls">
-			      <button id="createTeam" type="submit" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
-			    </div>
-			  </div>
-			</form>
+		<div class="row-fluid">
+			<a href="#myModal" type="button" id="create_team_button" role="button" class="btn offset1 top_bump" data-target="#create_team"  data-toggle="modal">Create New Team</a>	
+		</div> <!-- end button row -->
+		<div id="create_team" class="modal hide fade">
+			<div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			    <h3>Contact Form</h3>
+			</div>
+			<div class="modal-body">
+				<form id="modal_form" class="form-horizontal" style="margin-top: 20px;">
+				  <div class="control-group">
+				    <label class="control-label" for="teamName">Team Name</label>
+				    <div class="controls">
+				      <input type="text" class="team_inputs" id="teamName" name="teamName" placeholder="Da Bears">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="mgr_fname">Manager's First Name</label>
+				    <div class="controls">
+				      <input type="text" class="team_inputs" id="mgr_fname" name="mgr_fname" placeholder="Ex: Jimbo" >
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
+				    <div class="controls">
+				      <input type="text" class="team_inputs" id="mgr_lname" name="mgr_lname" placeholder="Ex: Jones">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="phone">Phone Number</label>
+				    <div class="controls">
+				      <input type="text" id="phone" class="team_inputs" name="phone" placeholder="Ex: 1234567890">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="sponsor">Team Sponsor</label>
+				    <div class="controls">
+				      <input type="text" class="team_inputs" id="sponsor" name="sponsor" placeholder="Ex: Adidas">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="zip">Zip Code</label>
+				    <div class="controls">
+				      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="Ex: 12345" >
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <div class="controls">
+				      <button id="createTeam" type="submit" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
+				    </div>
+				  </div>
+				</form>
+			</div>
+		</div> <!-- end modal -->		
+		<div class="alert" style="margin-top: 20px;">
+		  <button type="button" class="close" data-dismiss="alert">&times;</button>
+		  <strong>Sorry!</strong> The team limit has been reached.
 		</div>
 	</div>
-<div class="row span9 offset1" style="margin-top: 20px;">
-	<div class="alert">
-	  <button type="button" class="close" data-dismiss="alert">&times;</button>
-	  <strong>Sorry!</strong> The team limit has been reached.
-	</div>
-</div>
-
 <script type="text/javascript">
 
 	$('body').popover({
