@@ -17,24 +17,29 @@
 		//hide team limit alert upon load
 		$('.alert').hide();
 
+		$("#mytable").tablesorter(); 
+
 		$.ajax({type: 'GET', url: 'https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team', success: function (data) {
 			league_array.push(data); 
-			printTeam(data);
-			sortTable();			
+			printTeam(data); // populates table on load
+			sortTable(); // loads and triggers tablesorter on an empty table			
 		}});       
 
 		var validate = $("#modal_form").validate({
 			rules: {
 			    teamName: {
 			      minlength: 2,
+			      maxlength: 32,
 			      required: true
 				},
 			    mgr_fname: {
 			      minlength: 2,
+			      maxlength: 20,
 			      required: true
 				},
 			    mgr_lname: {
 			      minlength: 2,
+			      maxlength:20,
 			      required: true
 				},
 			    phone: {
@@ -44,12 +49,13 @@
 				},
 			    sponsor: {
 			      minlength: 2,
+			      maxlength: 20,
 			      required: true
 				},
 			    zip: {			 
 			      digits: true,
 			      required: true,
-			      rangelength: [5, 5]
+			      rangelength: [3, 3]
 				}
 			},
 			highlight: function(element) {
@@ -62,15 +68,19 @@
 			}
 		});
 
-		$("#mytable").tablesorter(); 
+		$('#create_team').on('show', function (e) { // max team limit function
+			console.log(league_array[0].length);
+    		if (league_array[0].length === 8) {
+    			$('.alert').show();
+    			return e.preventDefault();
+    		};
+    	
+		});
 
-		$('#create_team_button').on('click', function (e) {
-    		if (league_array > 0) return e.preventDefault() // stops modal from being shown
-		})
 
 
 		// $('#create_team_button').click(function() {
-		// 	teamLimit();
+		// 		teamLimit();
 		// });
 
 		$('#createTeam').click(function () {	
@@ -82,14 +92,14 @@
 			    lastName: $('#mgr_lname').val(),
 			    phoneNumber: $('#phoneNumber').val(),
 			    sponsor: $('#sponsor').val(),
-			    zip: $('#zip').val(),
+			    zip: "37" + $('#zip').val(),
 			    wins: 0,
 			    losses: 0  	  
 			};
 
-			lineWrite();
+			lineWrite(); //adds single row on form submit
 
-			// validForm();
+			// validForm(); //form validation - requires fields *NOT WORKING*
 
 			
 
@@ -106,7 +116,7 @@
 			});
 
 			clearForm(); //clear form inputs
-			teamLimit(); //sets team limit at 8  		
+			teamLimit(); //sets team limit at 8 *NOT WORKING* 		
 			validateClear(); //clears validate status on form submit
 			sortTable(); //loads sort table on empty table 
 
@@ -152,8 +162,8 @@
     		
 		};
 
-		//populates table on load. Contains popover content. 
-		function printTeam(data){
+
+		function printTeam(data){ 		//populates table on load. Contains popover content. 
 			$('#standings').html(''); 
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
@@ -172,15 +182,6 @@
 				$(this).val("");
 			});
 		}; //end clearForm func
-
-		//limits league to 8 teams
-		function teamLimit(){	
-			console.log(league_array.length);
-			if (league_array.length >= 2) {
-				$('.alert').show();
-				return false;
-			}; 
-		}; //end teamLimit func
 
 		//resets form validation on opening. 
 		function validateClear() {
@@ -233,37 +234,38 @@
 				  <div class="control-group">
 				    <label class="control-label" for="teamName">Team Name</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="teamName" name="teamName" placeholder="Da Bears">
+				      <input type="text" class="team_inputs" id="teamName" name="teamName" placeholder="Mojo's Maraudin' Morons">
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="mgr_fname">Manager's First Name</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="mgr_fname" name="mgr_fname" placeholder="Ex: Jimbo" >
+				      <input type="text" class="team_inputs" id="mgr_fname" name="mgr_fname" placeholder="Mojo" >
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="mgr_lname" name="mgr_lname" placeholder="Ex: Jones">
+				      <input type="text" class="team_inputs" id="mgr_lname" name="mgr_lname" placeholder="Nixon">
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="phone">Phone Number</label>
 				    <div class="controls">
-				      <input type="text" id="phoneNumber" class="team_inputs" name="phone" placeholder="Ex: 1234567890">
+				      <input type="text" id="phoneNumber" class="team_inputs" name="phone" placeholder="1234567890">
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="sponsor">Team Sponsor</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="sponsor" name="sponsor" placeholder="Ex: Adidas">
+				      <input type="text" class="team_inputs" id="sponsor" name="sponsor" placeholder="Mojo's Lobotomy Supplies">
 				    </div>
 				  </div>
-				  <div class="control-group">
+				  <div class="control-group input-prepend">
 				    <label class="control-label" for="zip">Zip Code</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="Ex: 12345" >
+				      <span class="add-on">37</span>
+				      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="216">
 				    </div>
 				  </div>
 				  <div class="control-group">

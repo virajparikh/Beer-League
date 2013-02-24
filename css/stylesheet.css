@@ -53,6 +53,16 @@ a
 	font-size: 2em;
 }
 
+#modal_form input
+{
+	height: 30px;
+}
+
+#zip
+{
+	width: 176px;
+}
+
 
 
 
