@@ -18,8 +18,7 @@
 		$('.alert').hide();
 
 		$.ajax({type: 'GET', url: 'https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team', success: function (data) {
-			league_array.push(data);
-			// calcPer(data); //calculate and format win percentage 
+			league_array.push(data); 
 			printTeam(data);
 			sortTable();			
 		}});       
@@ -90,7 +89,7 @@
 
 			lineWrite();
 
-			validForm();
+			// validForm();
 
 			
 
@@ -125,13 +124,13 @@
 
 		});
 
-		function validForm() {
-			$('.control-group').each(function() {
-				if ($(this).hasClass('error')) {
-					validForm();
-				};
-			});
-		};	   
+		// function validForm() {
+		// 	$('.control-group').each(function() {
+		// 		if ($(this).hasClass('error')) {
+		// 			
+		// 		};
+		// 	});
+		// };	   
 
 		function calcPer(data, index){
 				//variables used in calculating & displaying win %
@@ -147,7 +146,7 @@
 	    		else if (isNaN(raw_per)) { //if raw_per isn't a number, write .000
 	    			win_per = ".000";
 	    		}
-	    		else { //if number is 1.000, display full number.
+	    		else { //if number is 1, display full number.
 	    			win_per = "1.000";
 	    		};
     		
@@ -175,13 +174,13 @@
 		}; //end clearForm func
 
 		//limits league to 8 teams
-		// function teamLimit(){	
-		// 	console.log(league_array.length);
-		// 	if (league_array.length >= 2) {
-		// 		$('.alert').show();
-		// 		return false;
-		// 	}; 
-		// }; //end teamLimit func
+		function teamLimit(){	
+			console.log(league_array.length);
+			if (league_array.length >= 2) {
+				$('.alert').show();
+				return false;
+			}; 
+		}; //end teamLimit func
 
 		//resets form validation on opening. 
 		function validateClear() {
