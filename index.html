@@ -17,13 +17,15 @@
 		//hide team limit alert upon load
 		$('.alert').hide();
 
-		$("#mytable").tablesorter(); 
+		$('#mytable').tablesorter(); 
 
 		$.ajax({type: 'GET', url: 'https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team', success: function (data) {
 			league_array.push(data); 
 			printTeam(data); // populates table on load
-			sortTable(); // loads and triggers tablesorter on an empty table			
-		}});       
+			sortTable(); // loads and triggers tablesorter on an empty table	
+			//scheduleWrite(data, sched);		
+			}
+		});       
 
 		var validate = $("#modal_form").validate({
 			rules: {
@@ -69,18 +71,15 @@
 		});
 
 		$('#create_team').on('show', function (e) { // max team limit function
-			console.log(league_array[0].length);
     		if (league_array[0].length === 8) {
     			$('.alert').show();
     			return e.preventDefault();
-    		};
-    	
+    		};  	
 		});
 
-		$('#createTeam').click(function () {	
-
+		$('#createTeam').click(function () {						
+					
 			var team = {
-				id: $('#teamName').val(),
 	 			teamName: $('#teamName').val(),
 			    firstName: $('#mgr_fname').val(),
 			    lastName: $('#mgr_lname').val(),
@@ -92,10 +91,7 @@
 			};
 
 			lineWrite(); //adds single row on form submit
-
 			// validForm(); //form validation - requires fields *NOT WORKING*
-
-			
 
     		$.ajax({
     			url: "https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team",
@@ -105,36 +101,27 @@
 				success: function () {
 					league_array.push(team);
 					console.log(league_array);
-				}
-				 
+				}				 
 			});
-
-			clearForm(); //clear form inputs
-			teamLimit(); //sets team limit at 8 *NOT WORKING* 		
+			$('#create_team').modal('hide'); //hide modal on submit...
+			clearForm(); //clear form inputs	
 			validateClear(); //clears validate status on form submit
-			sortTable(); //loads sort table on empty table 
-
+			sortTable(); //loads sort table on empty table  
+ 				    
 		}); //end submit click function	
 
 		$('table').on('click', '.nix', function () {
-			// $.ajax({
-   //  			url: "https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team/" + $(this).closest('a').text,
-			// 	type: "DELETE",
-			// 	success: function () {
-			// 	}
+			$.ajax({
+    			url: "backliftapp/team/" + $(this).attr('data-id'),
+				type: "DELETE",
+				dataType: "json",
+				success: function () {
+				}
 				 
-			// });
+			});
 			$(this).closest('tr').remove();
 
 		});
-
-		// function validForm() {
-		// 	$('.control-group').each(function() {
-		// 		if ($(this).hasClass('error')) {
-		// 			
-		// 		};
-		// 	});
-		// };	   
 
 		function calcPer(data, index){
 				//variables used in calculating & displaying win %
@@ -152,28 +139,26 @@
 	    		}
 	    		else { //if number is 1, display full number.
 	    			win_per = "1.000";
-	    		};
-    		
-		};
-
+	    		};  		
+		}; // end calcPer func
 
 		function printTeam(data){ 		//populates table on load. Contains popover content. 
 			$('#standings').html(''); 
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
 
-				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + data[index].id + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 					};
 		}; //end printTeam func
 
 		function lineWrite(team) {
-			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td>' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
+			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
 
-		}; //end lineWrite funct
+		}; //end lineWrite func
 
 		function clearForm(){
-			$(".team_inputs").each(function(){
-				$(this).val("");
+			$('.team_inputs').each(function(){
+				$(this).val('');
 			});
 		}; //end clearForm func
 
@@ -192,11 +177,8 @@
 	        //sort on the first column 
 	        $("#mytable").trigger("sorton", [sorting]); 
 	        return false;	        
-		};
-
+		}; //end sortTable
 	}); //end doc ready
-
-
 
 	</script>
 
@@ -264,7 +246,7 @@
 				  </div>
 				  <div class="control-group">
 				    <div class="controls">
-				      <button id="createTeam" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
+				      <button id="createTeam" class="submit" onclick="return false">Submit</button>
 				    </div>
 				  </div>
 				</form>
