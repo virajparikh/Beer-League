@@ -29,6 +29,13 @@ a
 	margin-top: 20px;
 }
 
+#schedule_body th, #schedule_body td
+{
+	border: 1px solid black;
+	padding: 10px 0;
+	text-align: center;
+}
+
 #mytable th, #mytable td
 {
 	border: 1px solid black;
@@ -62,8 +69,6 @@ a
 {
 	width: 176px;
 }
-
-
 
 
 
