@@ -201,32 +201,24 @@
 		}; //end scheduleWrite func
 
 		function writeSchedEven(data, sched) {
-			for (var i = 0; i < sched.length; i++) {
+			for (var i = 0; i < sched.length; i++) { //weeks loop
 				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_body');
-				for (var j = 0; j < sched[i].length; j++) {
+				for (var j = 0; j < sched[i].length; j++) { //games loop
 					$('<tr><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body');
-					for (var k = 0; k < sched[i][j].length; k++) {
-						$('<tr><td>' + data[sched[i][j][k] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
-					};	
+					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+					$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
 				};
 			};
 		}; //end writeSchedEven func
 
 		function writeSchedOdd(data, sched) {
-			console.log(sched);
-			console.log(data);
 			for (var i = 0; i < sched.length; i++) {
-				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_body');
-				console.log(data[6].teamName);
-				console.log(data[sched[i][0][1] - 2].teamName);
-				$('<tr><td colspan="2">' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.</td></tr>').appendTo('#schedule_body');
+				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_body');
 				for (var j = 1; j < sched[i].length; j++) {
-					console.log(data[0].teamName);
 					$('<tr><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
 						teamName + "</td></tr>").appendTo('#schedule_body');
-					for (var k = 0; k < sched[i][j].length; k++) {
-							$('<tr><td>' + data[sched[i][j][k] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');			
-					};
+					$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+					$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
 				};
 			};		
 		}; //end writeSchedOdd
