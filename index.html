@@ -81,7 +81,7 @@
 		$('#createTeam').click(function () {						
 					
 			var team = {
-				id: league_array.length + 1,
+				id: league_array[0].length + 1,
 	 			teamName: $('#teamName').val(),
 			    firstName: $('#mgr_fname').val(),
 			    lastName: $('#mgr_lname').val(),
@@ -153,7 +153,7 @@
 		}; //end printTeam func
 
 		function lineWrite(team) {
-			var index = league_array.length;
+			var index = league_array[0].length;
 			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + (index + 1) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
 
 		}; //end lineWrite func
