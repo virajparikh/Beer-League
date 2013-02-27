@@ -81,6 +81,7 @@
 		$('#createTeam').click(function () {						
 					
 			var team = {
+				id: league_array.length + 1,
 	 			teamName: $('#teamName').val(),
 			    firstName: $('#mgr_fname').val(),
 			    lastName: $('#mgr_lname').val(),
@@ -101,7 +102,6 @@
 				data: team,
 				success: function () {
 					league_array.push(team);
-					console.log(league_array);
 				}				 
 			});
 			$('#create_team').modal('hide'); //hide modal on submit...
@@ -117,12 +117,13 @@
 				type: "DELETE",
 				dataType: "json",
 				success: function () {
+					league_array[0].splice($(this).attr('data-index'), 1);
 				}
 				 
 			});
 			$(this).closest('tr').remove();
 
-		});
+		}); //end delete entry
 
 		function calcPer(data, index){
 				//variables used in calculating & displaying win %
@@ -133,7 +134,7 @@
 	    		raw_per = (data[index].wins/(data[index].wins + data[index].losses)).toFixed(3); 
 	    		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
 	    			per_array = raw_per.split('.');
-	    			win_per = "." + per_array[1];
+	    			win_per = '.' + per_array[1];
 	    		}
 	    		else if (isNaN(raw_per)) { //if raw_per isn't a number, write .000
 	    			win_per = ".000";
@@ -147,12 +148,13 @@
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
 
-				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + data[index].id + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + data[index].id + '" data-index="' + index + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 					};
 		}; //end printTeam func
 
 		function lineWrite(team) {
-			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
+			var index = league_array.length;
+			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + (index + 1) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
 
 		}; //end lineWrite func
 
@@ -242,8 +244,8 @@
 				</tbody>
 			</table>
 		</div> <!-- end table row -->
-		<div class="row-fluid">
-			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1 top_bump" data-target="#create_team"  data-toggle="modal">Create New Team</a>	
+		<div class="row-fluid top_bump">
+			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>	
 		</div> <!-- end button row -->
 		<div class="row-fluid">
 			<table class="span6 offset1" style="margin-top: 20px;">
