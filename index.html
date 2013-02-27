@@ -93,7 +93,6 @@
 			};
 
 			lineWrite(); //adds single row on form submit
-			// validForm(); //form validation - requires fields *NOT WORKING*
 
     		$.ajax({
     			url: "/backliftapp/team",
@@ -101,7 +100,7 @@
 				dataType: "json",
 				data: team,
 				success: function () {
-					league_array.push(team);
+					league_array[0].push(team);
 				}				 
 			});
 			$('#create_team').modal('hide'); //hide modal on submit...
@@ -116,14 +115,14 @@
     			url: "backliftapp/team/" + $(this).attr('data-id'),
 				type: "DELETE",
 				dataType: "json",
-				success: function () {
+				success: function () {					
 					league_array[0].splice($(this).attr('data-index'), 1);
 				}
 				 
 			});
 			$(this).closest('tr').remove();
 
-		}); //end delete entry
+		}); //end delete function
 
 		function calcPer(data, index){
 				//variables used in calculating & displaying win %
@@ -148,7 +147,7 @@
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
 
-				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + data[index].id + '" data-index="' + index + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName +'</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + data[index].id + '" data-index="' + index + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 					};
 		}; //end printTeam func
 
@@ -203,27 +202,39 @@
 		}; //end scheduleWrite func
 
 		function writeSchedEven(data, sched) {
+			for (var g = 0; g < sched.length; g++) {
+				$('<table class="span12"><thead id="schedule_head' + g + '" class="slide_head></thead><tbody style="display: none;" class="slide_body" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
+			};
+
 			for (var i = 0; i < sched.length; i++) { //weeks loop
-				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_body');
+				$('<tr style="background-color: #8dbdd8;"><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_head' + i);
 				for (var j = 0; j < sched[i].length; j++) { //games loop
-					$('<tr><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
-				};
+					$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body' + i);
+					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+					$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+				};				
 			};
 		}; //end writeSchedEven func
 
 		function writeSchedOdd(data, sched) {
+			for (var g = 0; g < sched.length; g++) {
+				$('<table class="span12"><thead id="schedule_head' + g + '" class="slide_head></thead><tbody style="display: none;" class="slide_body" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
+			};
+
 			for (var i = 0; i < sched.length; i++) {
-				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_body');
+				$('<tr style="background-color: #8dbdd8;"><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_head' + i);
 				for (var j = 1; j < sched[i].length; j++) {
 					$('<tr><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
-						teamName + "</td></tr>").appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+						teamName + "</td></tr>").appendTo('#schedule_body' + i);
+					$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+					$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
 				};
 			};		
 		}; //end writeSchedOdd
+
+		$('$schedule_table').on('click', '.slide_head', function(){
+			$(this).next('.slide_body').slideToggle();
+		});
 
 	}); //end doc ready
 
@@ -248,9 +259,7 @@
 			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>	
 		</div> <!-- end button row -->
 		<div class="row-fluid">
-			<table class="span6 offset1" style="margin-top: 20px;">
-				<tbody id="schedule_body">
-				</tbody>
+			<table id="schedule_table" class="span6 offset1" style="margin-top: 20px;">
 			</table>
 		</div>
 		<div id="create_team" class="modal hide fade">
