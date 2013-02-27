@@ -24,6 +24,7 @@
 			league_array.push(data); 
 			printTeam(data); // populates table on load
 			scheduleWrite(data);	
+			weekPop(data);
 			sortTable(); // loads and triggers tablesorter on an empty table
 			}
 		});       
@@ -202,6 +203,7 @@
 		}; //end scheduleWrite func
 
 		function writeSchedEven(data, sched) {
+
 			for (var g = 0; g < sched.length; g++) {
 				$('<table class="span12"><thead id="schedule_head' + g + '" class="slide_head></thead><tbody style="display: none;" class="slide_body" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
 			};
@@ -217,12 +219,13 @@
 		}; //end writeSchedEven func
 
 		function writeSchedOdd(data, sched) {
-			for (var g = 0; g < sched.length; g++) {
-				$('<table class="span12"><thead id="schedule_head' + g + '" class="slide_head></thead><tbody style="display: none;" class="slide_body" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
-			};
+
+		for(var g = 0; g < sched.length; g++) {
+			$('<table class = "span12"><thead class="slide_head" id="schedule_head' + g +'"></thead><tbody class="slide_body" style="display: none;" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
+		}; //creates blank table		
 
 			for (var i = 0; i < sched.length; i++) {
-				$('<tr style="background-color: #8dbdd8;"><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_head' + i);
+				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_head' + i);
 				for (var j = 1; j < sched[i].length; j++) {
 					$('<tr><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
 						teamName + "</td></tr>").appendTo('#schedule_body' + i);
@@ -232,9 +235,15 @@
 			};		
 		}; //end writeSchedOdd
 
-		$('$schedule_table').on('click', '.slide_head', function(){
+		function weekPop(data) {
+			$('#week_selector').prepend('<option>Select:</option>');
+			
+		}; //select box for enter scores button
+
+
+		$('#schedule_table').on("click", '.slide_head', function() {
 			$(this).next('.slide_body').slideToggle();
-		});
+		}); //adds slide toggle to schedule table
 
 	}); //end doc ready
 
@@ -256,12 +265,22 @@
 			</table>
 		</div> <!-- end table row -->
 		<div class="row-fluid top_bump">
-			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>	
+			
+			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>
+			
+			<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn" data-target="#scores_modal"  data-toggle="modal">Enter Scores</a>	
+
+			<a href="#" type="button" id="start_season_button" role="button" class="btn btn-primary" data-target="#"  data-toggle="modal">Start Season</a>	
+		
 		</div> <!-- end button row -->
+
+		<!-- schedule table -->
 		<div class="row-fluid">
 			<table id="schedule_table" class="span6 offset1" style="margin-top: 20px;">
 			</table>
 		</div>
+
+		<!-- create team modal -->
 		<div id="create_team" class="modal hide fade">
 			<div class="modal-header">
 			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -313,7 +332,41 @@
 				  </div>
 				</form>
 			</div>
-		</div> <!-- end modal -->		
+		</div> <!-- end create team modal -->	
+
+		<!-- enter scores modal -->
+		<div class="modal hide fade" id="scores_modal">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		    <h3>Enter Scores</h3>
+		  </div>
+		  <div class="modal-body">
+		    <form id="score_form" class="form-horizontal" style="margin-top: 20px;">
+		    	<div class="control-group" style="text-align: center; height: 20px;">
+		    	<select id="week_selector"></select>
+		    	</div>
+		    	<!-- begin dynamically added content -->
+		 		<div class="control-group">
+				    <label class="control-label" for="sponsor">Team One Score</label>
+				    <div class="controls">
+				      <input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Team One Score">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="team_two_score">Team Two Score</label>
+				    <div class="controls">
+				      <input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Team Two Score">
+				    </div>
+				 </div>
+				 <!-- end dynamically added content -->
+			</form>
+		  </div>
+		  <div class="modal-footer">
+		    <a href="#" class="btn btn-primary">Save Scores</a>
+		  </div>
+		</div>
+		<!-- end enter scores modal -->
+
 		<div class="alert" style="margin-top: 20px;">
 		  <button type="button" class="close" data-dismiss="alert">&times;</button>
 		  <strong>Sorry!</strong> This league is full.

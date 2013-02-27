@@ -36,6 +36,13 @@ a
 	text-align: center;
 }
 
+/*#schedule_body th, #schedule_body td
+{
+	border: 1px solid black;
+	padding: 10px 0;
+	text-align: center;
+}*/
+
 #mytable th, #mytable td
 {
 	border: 1px solid black;
@@ -60,7 +67,7 @@ a
 	font-size: 2em;
 }
 
-#modal_form input
+#modal_form input, #score_form input
 {
 	height: 30px;
 }
