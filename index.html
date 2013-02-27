@@ -9,7 +9,7 @@
 	<script src="bootstrap.js"></script>
 	<script src="jquery.validate.js"></script>
 	<script src="jquery.tablesorter.min.js"></script> 
-	<script src="schedules.js"></script> 
+	<script src="schedule.js"></script>
 	<script>
 	$(document).ready(function(){
 
@@ -18,24 +18,32 @@
 		//hide team limit alert upon load
 		$('.alert').hide();
 
-		$.ajax({type: 'GET', url: 'https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team', success: function (data) {
+		$('#mytable').tablesorter(); 
+
+		$.ajax({type: 'GET', url: '/backliftapp/team', success: function (data) {
 			league_array.push(data); 
-			printTeam(data);
-			sortTable();			
-		}});       
+			printTeam(data); // populates table on load
+			scheduleWrite(data);	
+			weekPop(data);
+			sortTable(); // loads and triggers tablesorter on an empty table
+			}
+		});       
 
 		var validate = $("#modal_form").validate({
 			rules: {
 			    teamName: {
 			      minlength: 2,
+			      maxlength: 32,
 			      required: true
 				},
 			    mgr_fname: {
 			      minlength: 2,
+			      maxlength: 20,
 			      required: true
 				},
 			    mgr_lname: {
 			      minlength: 2,
+			      maxlength:20,
 			      required: true
 				},
 			    phone: {
@@ -45,12 +53,13 @@
 				},
 			    sponsor: {
 			      minlength: 2,
+			      maxlength: 20,
 			      required: true
 				},
 			    zip: {			 
 			      digits: true,
 			      required: true,
-			      rangelength: [5, 5]
+			      rangelength: [3, 3]
 				}
 			},
 			highlight: function(element) {
@@ -63,75 +72,58 @@
 			}
 		});
 
-		$("#mytable").tablesorter(); 
+		$('#create_team').on('show', function (e) { // max team limit function
+    		if (league_array[0].length === 8) {
+    			$('.alert').show();
+    			return e.preventDefault();
+    		};  	
+		}); //end team limit func
 
-		$('#create_team_button').on('click', function (e) {
-    		if (league_array > 0) return e.preventDefault() // stops modal from being shown
-		})
-
-
-		// $('#create_team_button').click(function() {
-		// 	teamLimit();
-		// });
-
-		$('#createTeam').click(function () {	
-
+		$('#createTeam').click(function () {						
+					
 			var team = {
-				id: $('#teamName').val(),
 	 			teamName: $('#teamName').val(),
 			    firstName: $('#mgr_fname').val(),
 			    lastName: $('#mgr_lname').val(),
 			    phoneNumber: $('#phoneNumber').val(),
 			    sponsor: $('#sponsor').val(),
-			    zip: $('#zip').val(),
+			    zip: "37" + $('#zip').val(),
 			    wins: 0,
 			    losses: 0  	  
 			};
 
-			lineWrite();
-
-			// validForm();
-
-
+			lineWrite(); //adds single row on form submit
+			// validForm(); //form validation - requires fields *NOT WORKING*
 
     		$.ajax({
-    			url: "https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team",
+    			url: "/backliftapp/team",
 				type: "POST",
 				dataType: "json",
 				data: team,
 				success: function () {
 					league_array.push(team);
 					console.log(league_array);
-				}
-
+				}				 
 			});
-
-			clearForm(); //clear form inputs
-			teamLimit(); //sets team limit at 8  		
+			$('#create_team').modal('hide'); //hide modal on submit...
+			clearForm(); //clear form inputs	
 			validateClear(); //clears validate status on form submit
-			sortTable(); //loads sort table on empty table 
-
+			sortTable(); //loads sort table on empty table  
+ 				    
 		}); //end submit click function	
 
 		$('table').on('click', '.nix', function () {
-			// $.ajax({
-   //  			url: "https://fantasyhomebrewleague-2krlj.backliftapp.com/backliftapp/team/" + $(this).closest('a').text,
-			// 	type: "DELETE",
-			// 	success: function () {
-			// 	}
-
-			// });
+			$.ajax({
+    			url: "backliftapp/team/" + $(this).attr('data-id'),
+				type: "DELETE",
+				dataType: "json",
+				success: function () {
+				}
+				 
+			});
 			$(this).closest('tr').remove();
 
 		});
-
-		// function validForm() {
-		// 	$('.control-group').each(function() {
-		// 		if ($(this).hasClass('error')) {
-		// 			
-		// 		};
-		// 	});
-		// };	   
 
 		function calcPer(data, index){
 				//variables used in calculating & displaying win %
@@ -149,39 +141,27 @@
 	    		}
 	    		else { //if number is 1, display full number.
 	    			win_per = "1.000";
-	    		};
-    		
-		};
+	    		};  		
+		}; // end calcPer func
 
-		//populates table on load. Contains popover content. 
-		function printTeam(data){
-			$('#standings').html(''); 
+		function printTeam(data){ 		//populates table on load. Contains popover content. 
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
 
-				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + data[index].id + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 					};
 		}; //end printTeam func
 
 		function lineWrite(team) {
-			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td>' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
+			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
 
-		}; //end lineWrite funct
+		}; //end lineWrite func
 
 		function clearForm(){
-			$(".team_inputs").each(function(){
-				$(this).val("");
+			$('.team_inputs').each(function(){
+				$(this).val('');
 			});
 		}; //end clearForm func
-
-		//limits league to 8 teams
-		function teamLimit(){	
-			console.log(league_array.length);
-			if (league_array.length >= 8) {
-				$('.alert').show();
-				return false;
-			}; 
-		}; //end teamLimit func
 
 		//resets form validation on opening. 
 		function validateClear() {
@@ -198,33 +178,58 @@
 	        //sort on the first column 
 	        $("#mytable").trigger("sorton", [sorting]); 
 	        return false;	        
-		};
+		}; //end sortTable
 
-		var week_array = [];
-// **********************************************************************************************************************
-		$("#updateScores").click(function(){
+		function scheduleWrite(data) {
+			var sched;
+
 			if (data.length === 4) {
-			for (i = 0; i < sched4.length; i++) {
-				for (j = 0; j < sched4[i].length; j++) {
+				sched = sched4;
+			}
+			else if (data.length === 5 || data.length === 6) {
+				sched = sched6;
+			}
+			else {
+				sched = sched8;
+			}; // end set sched variable
 
-					$('tablehead').append("<tr><td>Week " + sched4[i].length + "</td><td>Match-up</td><td>Result</td></tr>")
+			if (data.length % 2 !== 0) {
+				writeSchedOdd(data, sched);
+			}
+			else {
+				writeSchedEven(data, sched);
+			}; // end even/odd selector
+		}; //end scheduleWrite func
 
-					for (k = 0; k < sched4[i][j].length; k++) {
-
-						$('tablename').append("<tr><td>" + data[(sched4[i][j][k] - 1).teamName] + "</td><td>score</td></tr>");
-						};
-					};
+		function writeSchedEven(data, sched) {
+			for (var i = 0; i < sched.length; i++) { //weeks loop
+				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_body');
+				for (var j = 0; j < sched[i].length; j++) { //games loop
+					$('<tr><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body');
+					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+					$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
 				};
 			};
+		}; //end writeSchedEven func
 
-		});
-		// end updateScores click
+		function writeSchedOdd(data, sched) {
+			for (var i = 0; i < sched.length; i++) {
+				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_body');
+				for (var j = 1; j < sched[i].length; j++) {
+					$('<tr><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
+						teamName + "</td></tr>").appendTo('#schedule_body');
+					$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+					$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+				};
+			};		
+		}; //end writeSchedOdd
 
-// **********************************************************************************************************************
+		function weekPop(data) {
+			$('#week_selector').prepend('<option>Select:</option>');
+			
+		}
 
 	}); //end doc ready
-
-
 
 	</script>
 
@@ -243,9 +248,23 @@
 				</tbody>
 			</table>
 		</div> <!-- end table row -->
-		<div class="row-fluid">
-			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1 top_bump" data-target="#create_team"  data-toggle="modal">Create New Team</a>	
+		<div class="row-fluid top_bump">
+			
+			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>
+			
+			<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn" data-target="#scores_modal"  data-toggle="modal">Enter Scores</a>	
+
+			<a href="#" type="button" id="start_season_button" role="button" class="btn btn-primary" data-target="#"  data-toggle="modal">Start Season</a>	
+		
 		</div> <!-- end button row -->
+
+		<!-- create team modal -->
+		<div class="row-fluid">
+			<table class="span6 offset1" style="margin-top: 20px;">
+				<tbody id="schedule_body">
+				</tbody>
+			</table>
+		</div>
 		<div id="create_team" class="modal hide fade">
 			<div class="modal-header">
 			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -256,108 +275,87 @@
 				  <div class="control-group">
 				    <label class="control-label" for="teamName">Team Name</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="teamName" name="teamName" placeholder="Da Bears">
+				      <input type="text" class="team_inputs" id="teamName" name="teamName" placeholder="Mojo's Maraudin' Morons">
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="mgr_fname">Manager's First Name</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="mgr_fname" name="mgr_fname" placeholder="Ex: Jimbo" >
+				      <input type="text" class="team_inputs" id="mgr_fname" name="mgr_fname" placeholder="Mojo" >
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="mgr_lname">Manager's Last Name</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="mgr_lname" name="mgr_lname" placeholder="Ex: Jones">
+				      <input type="text" class="team_inputs" id="mgr_lname" name="mgr_lname" placeholder="Nixon">
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="phone">Phone Number</label>
 				    <div class="controls">
-				      <input type="text" id="phoneNumber" class="team_inputs" name="phone" placeholder="Ex: 1234567890">
+				      <input type="text" id="phoneNumber" class="team_inputs" name="phone" placeholder="1234567890">
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <label class="control-label" for="sponsor">Team Sponsor</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="sponsor" name="sponsor" placeholder="Ex: Adidas">
+				      <input type="text" class="team_inputs" id="sponsor" name="sponsor" placeholder="Mojo's Lobotomy Supplies">
 				    </div>
 				  </div>
-				  <div class="control-group">
+				  <div class="control-group input-prepend">
 				    <label class="control-label" for="zip">Zip Code</label>
 				    <div class="controls">
-				      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="Ex: 12345" >
+				      <span class="add-on">37</span>
+				      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="216">
 				    </div>
 				  </div>
 				  <div class="control-group">
 				    <div class="controls">
-				      <button id="createTeam" class="btn" data-dismiss="modal" aria-hidden="true">Submit</button>
+				      <button id="createTeam" class="submit" onclick="return false">Submit</button>
 				    </div>
 				  </div>
 				</form>
 			</div>
-		</div> 
-		<!-- end modal -->	
+		</div> <!-- end create team modal -->	
 
-		<!-- team limit alert -->
+		<!-- enter scores modal -->
+		<div class="modal hide fade" id="scores_modal">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		    <h3>Enter Scores</h3>
+		  </div>
+		  <div class="modal-body">
+		    <form id="score_form" class="form-horizontal" style="margin-top: 20px;">
+		    	<div class="control-group" style="text-align: center; height: 20px;">
+		    	<select id="week_selector"></select>
+		    	</div>
+		    	<!-- begin dynamically added content -->
+		 		<div class="control-group">
+				    <label class="control-label" for="sponsor">Team One Score</label>
+				    <div class="controls">
+				      <input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Team One Score">
+				    </div>
+				  </div>
+				  <div class="control-group">
+				    <label class="control-label" for="team_two_score">Team Two Score</label>
+				    <div class="controls">
+				      <input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Team Two Score">
+				    </div>
+				 </div>
+				 <!-- end dynamically added content -->
+			</form>
+		  </div>
+		  <div class="modal-footer">
+		    <a href="#" class="btn btn-primary">Save Scores</a>
+		  </div>
+		</div>
+		<!-- end enter scores modal -->
+
 		<div class="alert" style="margin-top: 20px;">
 		  <button type="button" class="close" data-dismiss="alert">&times;</button>
 		  <strong>Sorry!</strong> This league is full.
 		</div>
-		<!-- end team limit alert -->
-
-		<!-- score table -->
-		<div class="row-fluid span12" style="margin-top: 40px;">
-			<table id="scoretable" class="table table-striped table-bordered table-condensed">
-						<thead id="scoreHead">
-						</thead>
-						<tbody id="scoreBody">
-						</tbody>
-			</table>
-		</div>
-		<!-- end score table -->
-
-		<!-- button to trigger modal 'add team' form -->
-		<div class="row-fluid span12">
-			<a href="#myModal2" id="addTeam" role="button" class="btn" data-toggle="modal">Update Results</a>
-		</div>
-
-		<!-- modal -->
-		<div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
-			<div class="modal-header">
-			   	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			    <h3 id="myModalLabel">Update Results</h3>
-			</div>
-
-		  	<div class="modal-body">
-				<form id="modal-form-2" class="form-horizontal">
-
-				  	<div class="control-group">
-				    	<label class="control-label" for="inputfirstTeamScore">First Team Score</label>
-				    	<div class="controls">
-				     		<input type="text" class="scoreInput" id="firstTeamScore" name="firstTeamScore" required>
-				    	</div>
-				  	</div>
-
-				  	<div class="control-group">
-				    	<label class="control-label" for="inputsecondTeamScore">Second Team Score</label>
-				    	<div class="controls">
-				      		<input type="text" class="scoreInput" id="secondTeamScore" name="secondTeamScore" required>
-				   		</div>
-				  	</div>
-
-				  	<div class="modal-footer">
-    					<button id="updateScores" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Submit Update</button>
-  					</div>
-
-				</form>
-			</div>
-		</div>
-
-	</div> 
-	<!-- end container -->
-
+	</div>
 <script type="text/javascript">
 
 	$('body').popover({
