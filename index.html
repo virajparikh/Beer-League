@@ -202,32 +202,47 @@
 		}; //end scheduleWrite func
 
 		function writeSchedEven(data, sched) {
+
+		for(var g = 0; g < sched.length; g++) {
+			$('<table class = "span12"><thead class="slide_head" id="schedule_head' + g +'"></thead><tbody class="slide_body" style="display: none;" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
+		}		
+
+
 			for (var i = 0; i < sched.length; i++) { //weeks loop
-				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_body');
+				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_head' + i);
 				for (var j = 0; j < sched[i].length; j++) { //games loop
-					$('<tr><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+					$('<tr><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body' + i);
+					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+					$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
 				};
 			};
 		}; //end writeSchedEven func
 
-		function writeSchedOdd(data, sched) {
-			for (var i = 0; i < sched.length; i++) {
-				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_body');
-				for (var j = 1; j < sched[i].length; j++) {
-					$('<tr><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
-						teamName + "</td></tr>").appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
-					$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
-				};
-			};		
-		}; //end writeSchedOdd
+		// function writeSchedOdd(data, sched) {
+		// 	for (var i = 0; i < sched.length; i++) {
+		// 		$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_body');
+		// 		for (var j = 1; j < sched[i].length; j++) {
+		// 			$('<tr><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
+		// 				teamName + "</td></tr>").appendTo('#schedule_body');
+		// 			$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+		// 			$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body');
+		// 		};
+		// 	};		
+		// }; //end writeSchedOdd
 
 		function weekPop(data) {
 			$('#week_selector').prepend('<option>Select:</option>');
 			
 		}
+
+
+		$('#schedule_table').on("click", '.slide_head', function() {
+			$(this).next('.slide_body').slideToggle();
+		});
+
+		// $('schedule_head').click(function() {
+		// 	$(this).toggleClass('close');
+		// });
 
 	}); //end doc ready
 
@@ -258,13 +273,13 @@
 		
 		</div> <!-- end button row -->
 
-		<!-- create team modal -->
+		<!-- schedule table -->
 		<div class="row-fluid">
-			<table class="span6 offset1" style="margin-top: 20px;">
-				<tbody id="schedule_body">
-				</tbody>
-			</table>
+				<table id="schedule_table" class="span6 offset1" style="margin-top: 20px;">
+				</table>
 		</div>
+
+		<!-- create team modal -->
 		<div id="create_team" class="modal hide fade">
 			<div class="modal-header">
 			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
