@@ -29,12 +29,19 @@ a
 	margin-top: 20px;
 }
 
-#schedule_body th, #schedule_body td
+#schedule_table th, #schedule_table td
 {
 	border: 1px solid black;
 	padding: 10px 0;
 	text-align: center;
 }
+
+/*#schedule_body th, #schedule_body td
+{
+	border: 1px solid black;
+	padding: 10px 0;
+	text-align: center;
+}*/
 
 #mytable th, #mytable td
 {
