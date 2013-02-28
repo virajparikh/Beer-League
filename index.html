@@ -25,6 +25,7 @@
 			url: '/backliftapp/start', 
 			success: function (data) {
 				if (data[0].trigger === "and so it begins") {
+					$('<h4>This season is LIVE!</h4>').appendTo('#bigolhead');
 					$('body').addClass('nix_is_hidden');
 					$('#create_team_button').hide();
 					$('#start_season_button').hide();
@@ -338,7 +339,7 @@
 							"trigger": "and so it begins"
 						}, 
 						success: function (data) {
-							console.log(data);
+							$('<h4>This season is LIVE!</h4>').appendTo('#bigolhead');
 							$('body').addClass('nix_is_hidden');
 							$('#start_season_button').hide();
 							$('#create_team_button').hide();
@@ -362,34 +363,29 @@
 </head>
 <body>
 	<div class="container">
-		<div class="row-fluid" style="text-align: center;">
+		<div class="row-fluid" id="bigolhead" style="text-align: center;">
 			<h1>Beer League Standings</h1>
 		</div>
 		<div class="row-fluid">
-			<table id="mytable" class="tablesorter span10 offset1" cellspacing="1">
-				<thead>
-					<tr><th>Team</th><th>Wins</th><th>Losses</th><th>Win %</th></tr>
-				</thead>
-				<tbody id="standings">
-				</tbody>
+			<div class="span6">
+				<table id="mytable" class="tablesorter" cellspacing="1">
+					<thead>
+						<tr><th>Team</th><th>Wins</th><th>Losses</th><th>Win %</th></tr>
+					</thead>
+					<tbody id="standings">
+					</tbody>
+				</table>
+				<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>
+
+				<a type="button" id="start_season_button" role="button" class="btn btn-large offset1">Start Season</a>
+
+				<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn btn-success btn-large offset4 top_bump" data-target="#scores_modal"  data-toggle="modal" style="display: none;">Enter Scores</a>	
+				<!-- *BTN BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING -->
+				<!-- <a type="button" id="tempdelete" role="button" class="btn">DEV DELETE</a> -->
+			</div>
+			<table id="schedule_table" class="span6" style="margin-top: 10px;">
 			</table>
-		</div> <!-- end table row -->
-		<div class="row-fluid top_bump">
-			
-			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>
-			
-			<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn btn-success btn-large offset5" data-target="#scores_modal"  data-toggle="modal" style="display: none;">Enter Scores</a>	
-
-			<a type="button" id="start_season_button" role="button" class="btn btn-large offset1">Start Season</a>	
-
-			<!-- *BTN BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING -->
-			<!-- <a type="button" id="tempdelete" role="button" class="btn">temporary delete button</a> -->		
-		</div> <!-- end button row -->
-
-		<div class="row-fluid">
-			<table id="schedule_table" class="span6 offset1" style="margin-top: 20px;">
-			</table>
-		</div> <!-- end schedule table row -->
+		</div> <!-- end table row -->		
 
 		<!-- create team modal -->
 		<div id="create_team" class="modal hide fade">
