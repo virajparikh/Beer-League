@@ -23,7 +23,7 @@
 		$.ajax({type: 'GET', url: '/backliftapp/team', success: function (data) {
 			league_array.push(data); 
 			printTeam(data); // populates table on load
-			scheduleWrite(data);	
+			scheduleWrite(data); //populates scoreboard/schedule
 			weekPop(data);
 			sortTable(); // loads and triggers tablesorter on an empty table
 			}
@@ -102,8 +102,10 @@
 				data: team,
 				success: function () {
 					league_array[0].push(team);
+					scheduleCall();
 				}				 
 			});
+
 			$('#create_team').modal('hide'); //hide modal on submit...
 			clearForm(); //clear form inputs	
 			validateClear(); //clears validate status on form submit
@@ -116,14 +118,17 @@
     			url: "backliftapp/team/" + $(this).attr('data-id'),
 				type: "DELETE",
 				dataType: "json",
-				success: function () {					
-					league_array[0].splice($(this).attr('data-index'), 1);
-				}
-				 
-			});
-			$(this).closest('tr').remove();
+				complete: function() {
+					league_array[0].splice($(this).attr('data-index'), 1); //removes entry from league_array
+					scheduleCall();
+				}	
 
+			});
+
+			$(this).closest('tr').remove();   
 		}); //end delete function
+
+		// $.on('click', '.nix', function () {
 
 		function calcPer(data, index){
 				//variables used in calculating & displaying win %
@@ -148,13 +153,13 @@
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
 
-				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName +'</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + data[index].id + '" data-index="' + index + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName +'</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + data[index].id + '" data-index="' + index + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 					};
 		}; //end printTeam func
 
 		function lineWrite(team) {
 			var index = league_array[0].length;
-			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px;" data-id="' + (index + 1) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
+			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red;" data-id="' + (index + 1) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
 
 		}; //end lineWrite func
 
@@ -205,11 +210,11 @@
 		function writeSchedEven(data, sched) {
 
 			for (var g = 0; g < sched.length; g++) {
-				$('<table class="span12"><thead id="schedule_head' + g + '" class="slide_head></thead><tbody style="display: none;" class="slide_body" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
-			};
+				$('<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g + '" class="slide_head"></thead><tbody class="slide_body" id="schedule_body' + g + '" style="display: none;"></tbody></table></div>').appendTo('#schedule_table');
+			}; //creates empty table
 
 			for (var i = 0; i < sched.length; i++) { //weeks loop
-				$('<tr style="background-color: #8dbdd8;"><th colspan="2">Week ' + (i + 1) + ' Matchups</th></tr>').appendTo('#schedule_head' + i);
+				$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups</a></th></tr>').appendTo('#schedule_head' + i);
 				for (var j = 0; j < sched[i].length; j++) { //games loop
 					$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body' + i);
 					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
@@ -220,28 +225,36 @@
 
 		function writeSchedOdd(data, sched) {
 
-		for(var g = 0; g < sched.length; g++) {
-			$('<table class = "span12"><thead class="slide_head" id="schedule_head' + g +'"></thead><tbody class="slide_body" style="display: none;" id="schedule_body' + g + '"></tbody></table>').appendTo('#schedule_table');
-		}; //creates blank table		
+			for(var g = 0; g < sched.length; g++) {
+				$('<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g +'" class="slide_head"></thead><tbody id="schedule_body' + g + '" class="slide_body" style="display: none;"></tbody></table></div>').appendTo('#schedule_table');
+		}; //creates empty table		
 
-			for (var i = 0; i < sched.length; i++) {
-				$('<tr><th colspan="2">Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(' + data[sched[i][0][1] - 2].teamName + ' have a bye this week.)</span></th></tr>').appendTo('#schedule_head' + i);
-				for (var j = 1; j < sched[i].length; j++) {
-					$('<tr><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
+			for (var i = 0; i < sched.length; i++) { //weeks loop
+				$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(Bye week: ' + data[sched[i][0][1] - 2].teamName + ')</span></a></th></tr>').appendTo('#schedule_head' + i);
+				for (var j = 1; j < sched[i].length; j++) { //games loop
+					$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
 						teamName + "</td></tr>").appendTo('#schedule_body' + i);
 					$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
 					$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
 				};
 			};		
-		}; //end writeSchedOdd
+		}; //end writeSchedOdd func
+
+		function scheduleCall(){
+			$('#schedule_table').html(""); //clears schedule table
+			$.ajax({type: 'GET', url: '/backliftapp/team', success: function (data) {			
+				scheduleWrite(data); //populates scoreboard/schedule
+				}
+			});  
+		}; //end scheduleCall function
 
 		function weekPop(data) {
-			$('#week_selector').prepend('<option>Select:</option>');
-			
+			$('#week_selector').prepend('<option>Select:</option>');			
 		}; //select box for enter scores button
 
 
-		$('#schedule_table').on("click", '.slide_head', function() {
+		$('#schedule_table').on('click', '.slide_head', function() {
+			console.log("test");
 			$(this).next('.slide_body').slideToggle();
 		}); //adds slide toggle to schedule table
 
