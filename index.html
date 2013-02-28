@@ -20,14 +20,30 @@
 
 		$('#mytable').tablesorter(); 
 
-		$.ajax({type: 'GET', url: '/backliftapp/team', success: function (data) {
-			league_array.push(data); 
-			printTeam(data); // populates table on load
-			scheduleWrite(data); //populates scoreboard/schedule
-			weekPop(data);
-			sortTable(); // loads and triggers tablesorter on an empty table
+		$.ajax({
+			type: 'GET', 
+			url: '/backliftapp/start', 
+			success: function (data) {
+				if (data === "and so it begins") {
+					$('.nix').hide();
+					$('#start_season_button').hide();
+					$('#enter_scores_button').show();
+				}
 			}
-		});       
+		});   
+
+		$.ajax({
+			type: 'GET', 
+			url: '/backliftapp/team', 
+			success: function (data) {
+				league_array.push(data); 
+				printTeam(data); // populates table on load
+				scheduleWrite(data); //populates scoreboard/schedule
+				weekPop(data); //populates weeks menu
+				buttonColor();
+				sortTable(); // loads and triggers tablesorter on an empty table
+			},
+		});        
 
 		var validate = $("#modal_form").validate({
 			rules: {
@@ -103,6 +119,7 @@
 				success: function () {
 					league_array[0].push(team);
 					scheduleCall();
+					buttonColor();
 				}				 
 			});
 
@@ -122,15 +139,12 @@
 					league_array[0].splice($(this).attr('data-index'), 1); //removes entry from league_array
 					scheduleCall();
 				}	
-
 			});
-
-			$(this).closest('tr').remove();   
+			buttonColorDelVar(); //modified button color func for delete func only
+			$(this).closest('tr').remove();  
 		}); //end delete function
 
-		// $.on('click', '.nix', function () {
-
-		function calcPer(data, index){
+		function calcPer(data, index){ //calculates win %
 				//variables used in calculating & displaying win %
 				var raw_per, per_array;
 	    		raw_per = 0;
@@ -149,7 +163,7 @@
 	    		};  		
 		}; // end calcPer func
 
-		function printTeam(data){ 		//populates table on load. Contains popover content. 
+		function printTeam(data){ 		//populates table on load. Contains popover. 
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
 
@@ -157,12 +171,12 @@
 					};
 		}; //end printTeam func
 
-		function lineWrite(team) {
+		function lineWrite(team) { 		//writes table row when new team is added. Contains popover.
 			var index = league_array[0].length;
-			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red;" data-id="' + (index + 1) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
-
+			$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + (index + 1) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
 		}; //end lineWrite func
 
+		//clears form fields on close
 		function clearForm(){
 			$('.team_inputs').each(function(){
 				$(this).val('');
@@ -186,10 +200,39 @@
 	        return false;	        
 		}; //end sortTable
 
+
+
+		function buttonColor() {
+			if (league_array[0].length >= 4) {
+				console.log(league_array[0].length + " ok");
+				$('#start_season_button').removeClass('btn-danger').addClass('btn-success');
+			}
+			else {
+				console.log(league_array[0].length + " not yet");
+				$('#start_season_button').removeClass('btn-success').addClass('btn-danger');
+			}
+		}
+
+		function buttonColorDelVar() {
+			if (league_array[0].length >= 5) {
+				console.log(league_array[0].length + " ok");
+				$('#start_season_button').removeClass('btn-danger').addClass('btn-success');
+			}
+			else {
+				console.log(league_array[0].length + " not yet");
+				$('#start_season_button').removeClass('btn-success').addClass('btn-danger');
+			}
+		}
+
 		function scheduleWrite(data) {
 			var sched;
 
-			if (data.length === 4) {
+			if (data.length < 4) {
+				$('#schedule_table').hide();
+				return false;
+			}
+			else if (data.length === 4) {
+				$('#schedule_table').show();
 				sched = sched4;
 			}
 			else if (data.length === 5 || data.length === 6) {
@@ -209,35 +252,41 @@
 
 		function writeSchedEven(data, sched) {
 
-			for (var g = 0; g < sched.length; g++) {
-				$('<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g + '" class="slide_head"></thead><tbody class="slide_body" id="schedule_body' + g + '" style="display: none;"></tbody></table></div>').appendTo('#schedule_table');
-			}; //creates empty table
+			if (data.length >= 4) {
 
-			for (var i = 0; i < sched.length; i++) { //weeks loop
-				$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups</a></th></tr>').appendTo('#schedule_head' + i);
-				for (var j = 0; j < sched[i].length; j++) { //games loop
-					$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body' + i);
-					$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
-					$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
-				};				
+				for (var g = 0; g < sched.length; g++) {	 //creates empty table
+					$('<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g + '" class="slide_head"></thead><tbody class="slide_body" id="schedule_body' + g + '" style="display: none;"></tbody></table></div>').appendTo('#schedule_table');
+				}; 
+
+				for (var i = 0; i < sched.length; i++) { 	 //weeks loop
+					$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups</a></th></tr>').appendTo('#schedule_head' + i);
+					for (var j = 0; j < sched[i].length; j++) { 	//games loop
+						$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - 1].teamName + " vs. " + data[sched[i][j][1] - 1].teamName + "</td></tr>").appendTo('#schedule_body' + i);
+						$('<tr><td>' + data[sched[i][j][0] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+						$('<tr><td>' + data[sched[i][j][1] - 1].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+					};				
+				};
 			};
 		}; //end writeSchedEven func
 
 		function writeSchedOdd(data, sched) {
 
-			for(var g = 0; g < sched.length; g++) {
-				$('<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g +'" class="slide_head"></thead><tbody id="schedule_body' + g + '" class="slide_body" style="display: none;"></tbody></table></div>').appendTo('#schedule_table');
-		}; //creates empty table		
+			if (data.length >= 4) {
 
-			for (var i = 0; i < sched.length; i++) { //weeks loop
-				$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(Bye week: ' + data[sched[i][0][1] - 2].teamName + ')</span></a></th></tr>').appendTo('#schedule_head' + i);
-				for (var j = 1; j < sched[i].length; j++) { //games loop
-					$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
-						teamName + "</td></tr>").appendTo('#schedule_body' + i);
-					$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
-					$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
-				};
-			};		
+				for(var g = 0; g < sched.length; g++) {		//creates empty table
+					$('<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g +'" class="slide_head"></thead><tbody id="schedule_body' + g + '" class="slide_body" style="display: none;"></tbody></table></div>').appendTo('#schedule_table');
+				}; 		
+
+				for (var i = 0; i < sched.length; i++) { 	 //weeks loop
+					$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(Bye week: ' + data[sched[i][0][1] - 2].teamName + ')</span></a></th></tr>').appendTo('#schedule_head' + i);
+					for (var j = 1; j < sched[i].length; j++) { 	//games loop
+						$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - 2].teamName + " vs. " + data[sched[i][j][1] - 2].
+							teamName + "</td></tr>").appendTo('#schedule_body' + i);
+						$('<tr><td>' + data[sched[i][j][0] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+						$('<tr><td>' + data[sched[i][j][1] - 2].teamName + '</td><td>score</td></tr>').appendTo('#schedule_body' + i);
+					};
+				};	
+			};	
 		}; //end writeSchedOdd func
 
 		function scheduleCall(){
@@ -254,7 +303,6 @@
 
 
 		$('#schedule_table').on('click', '.slide_head', function() {
-			console.log("test");
 			$(this).next('.slide_body').slideToggle();
 		}); //adds slide toggle to schedule table
 
@@ -281,9 +329,9 @@
 			
 			<a href="#create_team" type="button" id="create_team_button" role="button" class="btn offset1" data-target="#create_team"  data-toggle="modal">Create New Team</a>
 			
-			<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn" data-target="#scores_modal"  data-toggle="modal">Enter Scores</a>	
+			<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn" data-target="#scores_modal"  data-toggle="modal" style="display: none;">Enter Scores</a>	
 
-			<a href="#" type="button" id="start_season_button" role="button" class="btn btn-primary" data-target="#"  data-toggle="modal">Start Season</a>	
+			<a href="#" type="button" id="start_season_button" role="button" class="btn btn-large offset1" data-target="#"  data-toggle="modal">Start Season</a>	
 		
 		</div> <!-- end button row -->
 
