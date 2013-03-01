@@ -43,6 +43,7 @@
 				printTeam(data); // populates table on load
 				scheduleWrite(data); //populates scoreboard/schedule
 				weekPop(data); //populates weeks menu
+				enterScoresPop(data); //populates enter scores modal
 				buttonColor(); //changes start season button color based on league size
 				sortTable(); // loads and triggers tablesorter on an empty table
 			},
@@ -325,10 +326,36 @@
 			});		
 		}; //end weekPop func
 
+		//populates enter scores modal
+		function enterScoresPop (data) {
+			$('#week_selector').change(function(data){
+				$('#game_scores').html('');
+            	var selectedItem, gameList;
+                selectedItem = $(this).val(); //no. 0-6
+                gameList = sched[selectedItem];
+                if (league_array[0].length % 2 === 0) { //even
+                	console.log("even");
+
+
+                	for (var index = 0; index < gameList.length; index ++) {
+                		
+                		$('<h4 style="text-align: center;">' + league_array[0][gameList[index][0] - 1].teamName + ' vs. ' + league_array[0][gameList[index][1] - 1].teamName + '</h4><div class="control-group"><label class="control-label" for="sponsor">' + league_array[0][gameList[index][0] - 1].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Score"></div></div><div class="control-group"><label class="control-label" for="team_two_score">' + league_array[0][gameList[index][1] - 1].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Score"></div></div>').appendTo('#game_scores');
+                	};
+                }
+                else { //odd
+                	for (var index = 1; index < gameList.length; index ++) {
+             
+                		$('<h4 style="text-align: center;">' + league_array[0][gameList[index][0] - 2].teamName + ' vs. ' + league_array[0][gameList[index][1] - 2].teamName + '</h4><div class="control-group"><label class="control-label" for="sponsor">' + league_array[0][gameList[index][0] - 2].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Score"></div></div><div class="control-group"><label class="control-label" for="team_two_score">' + league_array[0][gameList[index][1] - 2].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Score"></div></div>').appendTo('#game_scores');
+                	};	
+            	}	
+
+            }); //end score entry modal game population
+		};//end enterScoresPop
+
 		//adds slide toggle to schedule table
 		$('#schedule_table').on('click', '.slide_head', function() {
 			$(this).next('.slide_body').slideToggle();
-		});
+		});//end slide function
 
 		function startSeason() { //starts season if button is pressed and conditions are met
 			if (league_array[0].length >= 4) {
@@ -476,8 +503,8 @@
 		    	<select id="week_selector"></select>
 		    	</div>
 		    	<!-- begin dynamically added content --> 
-
-			
+		    	<div id="game_scores">
+				</div>
 				 <!-- end dynamically added content -->
 			</form>
 		  </div>
