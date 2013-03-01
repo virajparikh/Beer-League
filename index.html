@@ -15,6 +15,7 @@
 
 		var league_array = [];
 		var win_per = 0;
+		var sched;
 		//hide team limit alert upon load
 		$('.alert').hide();
 
@@ -97,10 +98,12 @@
     		};  	
 		}); //end team limit func
 
-		$('#createTeam').click(function () {						
-					
+		$('#createTeam').click(function () {	
+
+		//if team deleted from middle of field, id's stop corresponding to league_array.length. fix?										
 			var team = {
-				id: league_array[0].length + 1,
+				//id: idWrite(),
+				id: league_array[0].length + 1, 
 	 			teamName: $('#teamName').val(),
 			    firstName: $('#mgr_fname').val(),
 			    lastName: $('#mgr_lname').val(),
@@ -139,7 +142,7 @@
 		//*BTN BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING
 		// $('#tempdelete').click(function () {
 		// 	$.ajax({
-  //   			url: "backliftapp/start/43c5bea4-d3ba-4c1a-a0f8-da6f36f12010",
+  		//   	url: "backliftapp/start/43c5bea4-d3ba-4c1a-a0f8-da6f36f12010",
 		// 		type: "DELETE",
 		// 		dataType: "json",
 		// 		success: function() {
@@ -230,18 +233,15 @@
 		//buttonColor func slightly modified to work with delete function 
 		function buttonColorDelVar() {
 			if (league_array[0].length >= 5) {
-				console.log(league_array[0].length + " ok");
 				$('#start_season_button').removeClass('btn-danger').addClass('btn-success');
 			}
 			else {
-				console.log(league_array[0].length + " not yet");
 				$('#start_season_button').removeClass('btn-success').addClass('btn-danger');
 			}
 		}; //end buttonColorDelVar
 
 		//writes schedule table
 		function scheduleWrite(data) {
-			var sched;
 
 			if (data.length < 4) {
 				$('#schedule_table').hide();
@@ -316,9 +316,13 @@
 			});  
 		}; //end scheduleCall func
 
-		//populates weeks dropdown on score entry modal
+		//populates weeks selector in enter scores modal
 		function weekPop(data) {
-			$('#week_selector').prepend('<option>Select:</option>');			
+			$('#week_selector').prepend('<option>Select:</option>');	
+			$.each(sched, function(index){
+				var dynIndex = index + 1;
+				$('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
+			});		
 		}; //end weekPop func
 
 		//adds slide toggle to schedule table
@@ -355,6 +359,25 @@
 				alert("You need at least 4 teams to start the season. Make some friends!");
 			}
 		}; //end startSeason func
+
+		// function idWrite () {
+		// 	for (var i = 0; i < league_array[0].length + 1; i++) {
+		// 		console.log(league_array[0][i].id);
+		// 		console.log(i + 1);
+		// 		if (league_array[0].length === 0) { //sets behavior if loop is empty
+		// 			return league_array[0].length + 1;
+		// 		}
+		// 		else if (league_array[0][i].id != i + 1) {
+		// 			console.log(league_array[0][i].id);
+		// 			console.log(i + 1);
+		// 			return i + 1; 
+		// 		}
+		// 		else if () { //sets behavior if none have been deleted
+		// 			console.log("getting here?");
+		// 			return league_array[0].length + 1;
+		// 		}
+		// 	};
+		// };
 
 	}); //end doc ready
 
@@ -452,19 +475,9 @@
 		    	<div class="control-group" style="text-align: center; height: 20px;">
 		    	<select id="week_selector"></select>
 		    	</div>
-		    	<!-- begin dynamically added content -->
-		 		<div class="control-group">
-				    <label class="control-label" for="sponsor">Team One Score</label>
-				    <div class="controls">
-				      <input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Team One Score">
-				    </div>
-				  </div>
-				  <div class="control-group">
-				    <label class="control-label" for="team_two_score">Team Two Score</label>
-				    <div class="controls">
-				      <input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Team Two Score">
-				    </div>
-				 </div>
+		    	<!-- begin dynamically added content --> 
+
+			
 				 <!-- end dynamically added content -->
 			</form>
 		  </div>
