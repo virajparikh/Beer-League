@@ -80,8 +80,21 @@ body.nix_is_hidden .nix
   display: none;
 }
 
+@font-face {
+		font-family: 'richardson';
+		src: url(../fonts/richardson.ttf);
+}
 
+#bigolhead {
+	font-family: richardson;
+	color: #e6eeee;
+}
 
+body {
+	background-image: url("../../images/baseball-backgrounds-wallpapers.jpg");
+	/*background-image: -webkit-linear-gradient(top left, #023169 0%, #F9F9F9 100%);*/
+}
 
-
- 
+ #schedule_table {
+ 	background-color: #fff;
+ }
