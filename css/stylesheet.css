@@ -13,70 +13,58 @@ label.error {
   margin-top: 2px;
 }
 
-a 
-{
+a {
 	text-decoration: none;
 	color: black;
 }
 
-.top_bump
-{
+.top_bump {
 	margin-top: 10px;
 }
 
-#standings 
-{
+#standings {
 	margin-top: 20px;
 }
 
-#schedule_table th, #schedule_table td
-{
+#schedule_table th, #schedule_table td {
 	border: 1px solid black;
 	padding: 10px 0;
 	text-align: center;
 }
 
-#mytable th, #mytable td
-{
+#mytable th, #mytable td {
 	border: 1px solid black;
 	padding: 10px 0;
 	text-align: center;
 }
 
-#contact_pop td
-{
+#contact_pop td {
 	font-size: 1em!important;
 	border: 0;
 	padding: 5px 5px;
 }
 
-#mytable td
-{
+#mytable td {
 	font-size: 1.6em;
 }
 
-#mytable th
-{ 
+#mytable th { 
 	font-size: 2em;
 }
 
-#modal_form input, #score_form input
-{
+#modal_form input, #score_form input{
 	height: 30px;
 }
 
-#zip
-{
+#zip {
 	width: 176px;
 }
 
-a
-{
+a {
 	cursor: pointer;
 }
 
-body.nix_is_hidden .nix 
-{
+body.nix_is_hidden .nix {
   display: none;
 }
 
@@ -97,4 +85,38 @@ body {
 
  #schedule_table {
  	background-color: #fff;
- }
+}
+
+ .modal-body {
+    max-height: 600px;
+}
+
+input {
+    text-align: center;
+}
+
+.score_labels {
+	margin-left: 100px;
+}
+
+.score_inputs {
+	width: 90px; 
+	margin-left: 20px;
+}
+
+#backdrop {
+	height: 437px;
+	background-color:rgba(255,255,255,0.6);
+	padding-left: 15px;
+	padding-top: 5px;
+	padding-bottom: 15px;
+}
+
+#mytable {
+	border-radius: 10px;
+}
+
+#score_form {
+	margin-top: 0;
+}
+
