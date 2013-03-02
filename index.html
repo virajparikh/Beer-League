@@ -329,23 +329,29 @@
 		//populates enter scores modal
 		function enterScoresPop (data) {
 			$('#week_selector').change(function(data){
+
 				$('#game_scores').html('');
             	var selectedItem, gameList;
                 selectedItem = $(this).val(); //no. 0-6
                 gameList = sched[selectedItem];
                 if (league_array[0].length % 2 === 0) { //even
-                	console.log("even");
-
+                
 
                 	for (var index = 0; index < gameList.length; index ++) {
                 		
-                		$('<h4 style="text-align: center;">' + league_array[0][gameList[index][0] - 1].teamName + ' vs. ' + league_array[0][gameList[index][1] - 1].teamName + '</h4><div class="control-group"><label class="control-label" for="sponsor">' + league_array[0][gameList[index][0] - 1].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Score"></div></div><div class="control-group"><label class="control-label" for="team_two_score">' + league_array[0][gameList[index][1] - 1].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Score"></div></div>').appendTo('#game_scores');
+                		$('<h4 style="text-align: center;">' + league_array[0][gameList[index][0] - 1].teamName + ' vs. ' + league_array[0][gameList[index][1] - 1].teamName + '</h4>').appendTo('#game_scores');
+                		$('<div class="control-group"><label class="control-label score_labels" for="sponsor">' + league_array[0][gameList[index][0] - 1].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Score"></div></div>').appendTo('#game_scores');
+                		$('<div class="control-group"><label class="control-label score_labels" for="team_two_score">' + league_array[0][gameList[index][1] - 1].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Score"></div></div>').appendTo('#game_scores');
                 	};
                 }
                 else { //odd
+                	$('#bye_announce').text('');
+                	$('<h4 style="font-weight: 200;">Bye week: ' + league_array[0][gameList[0][1] - 2].teamName + '</h4>').appendTo('#bye_announce');
                 	for (var index = 1; index < gameList.length; index ++) {
              
-                		$('<h4 style="text-align: center;">' + league_array[0][gameList[index][0] - 2].teamName + ' vs. ' + league_array[0][gameList[index][1] - 2].teamName + '</h4><div class="control-group"><label class="control-label" for="sponsor">' + league_array[0][gameList[index][0] - 2].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Score"></div></div><div class="control-group"><label class="control-label" for="team_two_score">' + league_array[0][gameList[index][1] - 2].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Score"></div></div>').appendTo('#game_scores');
+                		$('<h4 style="text-align: center;">' + league_array[0][gameList[index][0] - 2].teamName + ' vs. ' + league_array[0][gameList[index][1] - 2].teamName + '</h4>').appendTo('#game_scores');
+                		$('<div class="control-group"><label class="control-label score_labels" for="sponsor">' + league_array[0][gameList[index][0] - 2].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_one_score" name="team_one_score" placeholder="Score"></div></div>').appendTo('#game_scores');
+                		$('<div class="control-group"><label class="control-label score_labels" for="team_two_score">' + league_array[0][gameList[index][1] - 2].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_two_score" name="team_two_score" placeholder="Score"></div></div>').appendTo('#game_scores');
                 	};	
             	}	
 
@@ -417,6 +423,7 @@
 			<h1>Beer League Standings</h1>
 		</div>
 		<div class="row-fluid">
+			<div class="span12" id="backdrop">
 			<div class="span6">
 				<table id="mytable" class="tablesorter" cellspacing="1">
 					<thead>
@@ -435,7 +442,8 @@
 			</div>
 			<table id="schedule_table" class="span6" style="margin-top: 10px;">
 			</table>
-		</div> <!-- end table row -->		
+			</div>
+		</div>		
 
 		<!-- create team modal -->
 		<div id="create_team" class="modal hide fade">
@@ -493,14 +501,15 @@
 
 		<!-- enter scores modal -->
 		<div class="modal hide fade" id="scores_modal">
-		  <div class="modal-header">
+		  <div class="modal-header" id="scores_head" style="text-align: center;">
 		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		    <h3>Enter Scores</h3>
+		    <span id="bye_announce"></span>
 		  </div>
 		  <div class="modal-body">
-		    <form id="score_form" class="form-horizontal" style="margin-top: 20px;">
+		    <form id="score_form" class="form-horizontal">
 		    	<div class="control-group" style="text-align: center; height: 20px;">
-		    	<select id="week_selector"></select>
+		    	<select id="week_selector" style="width: 120px;"></select>
 		    	</div>
 		    	<!-- begin dynamically added content --> 
 		    	<div id="game_scores">
