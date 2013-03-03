@@ -110,13 +110,10 @@
 
 		$('#save_scores').click(function (){
 
-			// var week_array = [];
+		
 			//loop over control groups, grab data, push object to week array. push week array to results_array
 			var count = 1;
-			// var week_id = {
-			// 	id: $('#week_grab').val()
-			// };
-			// week_array.push(week_id);
+
 			$('.game_wraps').each(function(index){ 
 				var gameId = $('#id_' + count).val() + $('#id_' + (count + 1)).val();
 				var score1 = $('#team_' + count).val();
@@ -127,18 +124,27 @@
 					score1: score1,
 					score2: score2 
 				};
-				//week_array.push(game);
 				count += 2;
 				$.ajax({
 	    			url: "/backliftapp/results",
 					type: "POST",
 					dataType: "json",
 					data: game,
-					success: function () {
+					success: function (game) {
+						resultsPush(game);
 					}				 
 				}); 
-
+				scheduleCall();
 			});
+
+			function resultsPush (game) {
+				if (results_array.length === 0) {
+					results_array.push('[' + game +']');
+				}
+				else {
+					results_array.push(game);
+				}
+			};
 
 
 
@@ -202,7 +208,7 @@
 				success: function() {
 				}
 			});
-		}); //end TEMP delete function
+		}); //end DEV DELETE func
 
 		$('table').on('click', '.nix', function () {
 						$.ajax({
@@ -322,7 +328,7 @@
 		var clicker = 0;
 
 		function prepSched(i, j, n, data) { //appends schedule info into prepped table
-
+			console.log("test0");
 			var score_grab1, score_grab2;
 			if (clicker >= results_array[0].length) {
 				score_grab1 = 'TBA';
@@ -330,8 +336,17 @@
 			}
 
 			else {
-				score_grab1 = results_array[0][clicker].score1;
-				score_grab2 = results_array[0][clicker].score2;
+				$.each(results_array[0], function(index){
+					if ((data[sched[i][j][0] - n].id + data[sched[i][j][1] - n].id) == results_array[0][index].gameId) {
+						console.log(data[sched[i][j][0] - n].id + data[sched[i][j][1] - n].id);
+						console.log(results_array[0][index].gameId);
+						score_grab1 = results_array[0][index].score1;
+						score_grab2 = results_array[0][index].score2;
+						console.log("test1");
+					}
+					console.log("test2");
+				});
+				console.log("test3");
 			}
 
 			$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - n].teamName + " vs. " + data[sched[i][j][1] - n].teamName + "</td></tr>").appendTo('#schedule_body' + i);
