@@ -195,7 +195,7 @@
 		//*BTN BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING
 		$('#tempdelete').click(function () {
 			$.ajax({
-				url: "backliftapp/results/a1aef48d-ead1-482d-acb4-71c3dca71f3f",
+				url: "backliftapp/results/cc9604d4-b7ed-4015-899e-07db31449a82",
   		  	//url: "backliftapp/start/43c5bea4-d3ba-4c1a-a0f8-da6f36f12010",
 				type: "DELETE",
 				dataType: "json",
@@ -322,6 +322,7 @@
 		var clicker = 0;
 
 		function prepSched(i, j, n, data) { //appends schedule info into prepped table
+
 			var score_grab1, score_grab2;
 			if (clicker >= results_array[0].length) {
 				score_grab1 = 'TBA';
@@ -380,11 +381,21 @@
 	
 		function weekPop(data) {  //populates weeks selector in enter scores modal
 			$('#week_selector').prepend('<option>Select:</option>');	
-			$.each(sched, function(index){
-				var dynIndex = index + 1;
-				$('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
 
-			});		
+			if (results_array[0].length === 0) { 
+				$.each(sched, function(index){
+					var dynIndex = index + 1;
+					$('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
+				});	
+			}
+			else { //limits weeks selector to weeks that haven't already been entered. 
+				var index = (results_array[0].length/3);
+				while (index < sched.length) {
+					var dynIndex = index + 1;
+					$('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
+					index++;
+				};
+			}	
 		}; //end weekPop func
 
 		//assign unique ids to form inputs:
@@ -585,7 +596,8 @@
 			</form>
 		  </div>
 		  <div class="modal-footer">
-		    <a href="#" id="save_scores" class="btn btn-primary">Save Scores</a>
+		  	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		    <a href="#" id="save_scores" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save Scores</a>
 		  </div>
 		</div>
 		<!-- end enter scores modal -->
