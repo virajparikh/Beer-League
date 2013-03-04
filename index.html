@@ -23,6 +23,37 @@
 		$('#mytable').tablesorter(); 
 
 		$.ajax({
+			type: 'GET',
+			url: '/backliftapp/results',
+			success: function (data) {
+				//dataWipe(data); //***WIPES DATA - TESTING ONLY***
+				results_array.push(data);
+				weekPop(); //populates weeks menu
+			}
+		});
+
+		$.ajax({
+			type: 'GET', 
+			url: '/backliftapp/team', 
+			success: function (data) {
+				//dataWipe(data);
+				league_array.push(data); 
+				$.ajax({
+					type: 'GET', 
+					url: '/backliftapp/team', 
+					success: function (data) {
+						printTeam(data); // populates table on load
+						scheduleWrite(data); //populates scoreboard/schedule
+						weekPop(); //populates weeks menu
+						enterScoresPop(data); //populates enter scores modal
+						buttonColor(); //changes start season button color based on league size
+						sortTable(); // loads and triggers tablesorter on an empty table
+					}
+				}); 
+			}
+		});   //end print standings/schedule call  
+
+		$.ajax({
 			type: 'GET', 
 			url: '/backliftapp/start', 
 			success: function (data) {
@@ -33,30 +64,11 @@
 					$('#start_season_button').hide();
 					$('#enter_scores_button').show();
 				}
+				//dataWipe(data);	//***WIPES DATA - TESTING ONLY***		
 			}
 		});  //end start season call 
 
-		$.ajax({
-			type: 'GET',
-			url: '/backliftapp/results',
-			success: function (data) {
-				results_array.push(data);
-			}
-		});
-
-		$.ajax({
-			type: 'GET', 
-			url: '/backliftapp/team', 
-			success: function (data) {
-				league_array.push(data); 
-				printTeam(data); // populates table on load
-				scheduleWrite(data); //populates scoreboard/schedule
-				weekPop(data); //populates weeks menu
-				enterScoresPop(data); //populates enter scores modal
-				buttonColor(); //changes start season button color based on league size
-				sortTable(); // loads and triggers tablesorter on an empty table
-			}
-		});   //end print standings/schedule call  
+  //end print standings/schedule call  
 
 		var validate = $("#modal_form").validate({
 			rules: {
@@ -132,9 +144,10 @@
 					data: game,
 					success: function (game) {
 						resultsPush(game);
-					}				 
+						scheduleCall();
+
+					}			 
 				}); 
-				scheduleCall();
 			});
 
 			function resultsPush (game) {
@@ -146,19 +159,41 @@
 				}
 			};
 
-
-
-			// if (score1 > score2) {
-			// 	put reguest to add win to team 1
-			// 	put reguest to add loss to team 2
-			// }
-			// else {
-			// 	put request to add loss to team 1
-			// 	put request to add win to team 2
-			// }
-			// 	calculate win v loss, post to server, push to league array
+			$.ajax({
+				type: 'GET',
+				url: '/backliftapp/results',
+				success: function (data) {
+					assignWLs (data);
+				}
+			});
 
 		}); //end score entry click event
+
+		function dataWipe (data) {
+			console.log("wipe");
+			$.each(data, function(index){
+				id = data[index].id;
+				$.ajax({
+					url: "backliftapp/results/" + id,
+	  		  		//url: "backliftapp/start/" + id,
+	  		  		//url: "backliftapp/team/" + id,
+					type: "DELETE",
+					dataType: "json",
+				});
+			})
+		};
+
+		//*CLICK BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING
+		$('#tempdelete').click(function () {
+			$.ajax({
+				//url: "backliftapp/results/cc9604d4-b7ed-4015-899e-07db31449a82",
+  		  		//url: "backliftapp/start/43c5bea4-d3ba-4c1a-a0f8-da6f36f12010",
+				type: "DELETE",
+				dataType: "json",
+				success: function() {
+				}
+			});
+		}); //end DEV DELETE func
 
 		$('#createTeam').click(function () {	
 		//if team deleted from middle of field, id's stop corresponding to league_array.length. fix!
@@ -198,20 +233,9 @@
 			startSeason();
 		}); //start season click event
 
-		//*BTN BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING
-		$('#tempdelete').click(function () {
-			$.ajax({
-				url: "backliftapp/results/cc9604d4-b7ed-4015-899e-07db31449a82",
-  		  	//url: "backliftapp/start/43c5bea4-d3ba-4c1a-a0f8-da6f36f12010",
-				type: "DELETE",
-				dataType: "json",
-				success: function() {
-				}
-			});
-		}); //end DEV DELETE func
 
 		$('table').on('click', '.nix', function () {
-						$.ajax({
+			$.ajax({
     			url: "backliftapp/team/" + $(this).attr('data-id'),
 				type: "DELETE",
 				dataType: "json",
@@ -229,9 +253,9 @@
 	    		raw_per = 0;
 	    		per_array = 0;
 	    		//calculates win percentage to 3 decimal places
-	    		raw_per = (data[index].wins/(data[index].wins + data[index].losses)).toFixed(3); 
+	    		raw_per = (+data[index].wins/(+data[index].wins +++ +data[index].losses)).toFixed(3); 
 	    		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
-	    			per_array = raw_per.split('.');
+	    			per_array = raw_per.toString().split('.');
 	    			win_per = '.' + per_array[1];
 	    		}
 	    		else if (isNaN(raw_per)) { //if raw_per isn't a number, write .000
@@ -245,7 +269,6 @@
 		function printTeam(data){ 	//populates table on load. Contains popover. 
 			for (var index = 0; index < data.length; index++) { 
 				calcPer(data, index);
-
 				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName +'</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + data[index].id + '" data-index="' + index + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 					};
 		}; //end printTeam func
@@ -278,7 +301,7 @@
 
 		function buttonColor() {  //changes start season button color based on league size
 			if (league_array[0].length >= 4) {
-				$('#start_season_button').removeClass('btn-danger').addClass('btn-success');
+				$('#start_season_button').removeClass('btn-danger').addClass('btn-success');			
 			}
 			else {
 				$('#start_season_button').removeClass('btn-success').addClass('btn-danger');
@@ -328,7 +351,7 @@
 		var clicker = 0;
 
 		function prepSched(i, j, n, data) { //appends schedule info into prepped table
-			console.log("test0");
+
 			var score_grab1, score_grab2;
 			if (clicker >= results_array[0].length) {
 				score_grab1 = 'TBA';
@@ -338,15 +361,10 @@
 			else {
 				$.each(results_array[0], function(index){
 					if ((data[sched[i][j][0] - n].id + data[sched[i][j][1] - n].id) == results_array[0][index].gameId) {
-						console.log(data[sched[i][j][0] - n].id + data[sched[i][j][1] - n].id);
-						console.log(results_array[0][index].gameId);
 						score_grab1 = results_array[0][index].score1;
 						score_grab2 = results_array[0][index].score2;
-						console.log("test1");
 					}
-					console.log("test2");
 				});
-				console.log("test3");
 			}
 
 			$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + data[sched[i][j][0] - n].teamName + " vs. " + data[sched[i][j][1] - n].teamName + "</td></tr>").appendTo('#schedule_body' + i);
@@ -386,15 +404,17 @@
 			};	
 		}; //end writeSchedOdd func
 
-		function scheduleCall(){  //dynamically refreshes schedule table
+		function scheduleCall() {  //dynamically refreshes schedule table
 			$('#schedule_table').html(""); //clears schedule table
-			$.ajax({type: 'GET', url: '/backliftapp/team', success: function (data) {			
+			$.ajax({type: 'GET', url: '/backliftapp/team', 
+				success: function (data) {			
 				scheduleWrite(data); //populates scoreboard/schedule
 				}
 			});  
 		}; //end scheduleCall func
 	
-		function weekPop(data) {  //populates weeks selector in enter scores modal
+		function weekPop() {  //populates weeks selector in enter scores modal
+			$('#week_selector').html('');
 			$('#week_selector').prepend('<option>Select:</option>');	
 
 			if (results_array[0].length === 0) { 
@@ -403,8 +423,18 @@
 					$('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
 				});	
 			}
-			else { //limits weeks selector to weeks that haven't already been entered. 
-				var index = (results_array[0].length/3);
+			else { //limits weeks selector to weeks that haven't already been entered.
+				var index; 
+				if (league_array[0].length === 4 || league_array[0].length ===5) {
+					index = (results_array[0].length/2);
+				}
+				else if (league_array[0].length === 6 || league_array[0].length === 7) {
+					index = (results_array[0].length/3);
+				}
+				else {
+					index = (results_array[0].length/4);
+				}
+
 				while (index < sched.length) {
 					var dynIndex = index + 1;
 					$('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
@@ -486,6 +516,79 @@
 			}
 		}; //end startSeason func
 
+		function assignWLs (data) {
+
+			for (var index = 0; index < data.length; index++) {
+
+				var chop, teams, team1, team2;
+
+				chop = data[index].gameId;
+				teams = chop.toString().split('');
+				team1 = teams[0];
+				team2 = teams[1];
+
+				if (data[index].score1 > data[index].score2) {
+					console.log(team1);
+					//get win total, add one, send back
+					$.ajax({
+		    			url: "backliftapp/team/" + team1,
+						type: "PUT",
+						dataType: "json",
+						data: { 
+							wins: +league_array[0][team1 - 1].wins + 1 
+						},
+						success: function() {
+							console.log("check1a");
+							
+						}	
+					});	
+					console.log(team2);			
+					//get loss total, add one, send back
+					$.ajax({
+		    			url: "backliftapp/team/" + team2,
+						type: "PUT",
+						dataType: "json",
+						data: { 
+							losses: +league_array[0][team2 - 1].losses + 1 
+						},
+						complete: function() {
+							console.log("check2a");
+						}	
+					});	
+				} 
+				else {
+					console.log(team1);
+					//get loss total, add one, send back
+					$.ajax({
+		    			url: "backliftapp/team/" + team1,
+						type: "PUT",
+						dataType: "json",
+						data: { 
+							losses: +league_array[0][team1 - 1].losses + 1 
+						},
+						success: function() {
+							console.log("check3a");
+						}	
+					});
+
+					console.log(team2);
+					//get win total, add one, send back
+					$.ajax({
+		    			url: "backliftapp/team/" + team2,
+						type: "PUT",
+						dataType: "json",
+						data: { 
+							wins: +league_array[0][team2 - 1].wins + 1 
+						},
+						success: function() {
+							console.log("check4a");
+						}	
+					});
+				}
+			};
+		};
+	
+
 		// function idWrite () {
 		// 	for (var i = 0; i < league_array[0].length + 1; i++) {
 		// 		console.log(league_array[0][i].id);
@@ -531,7 +634,7 @@
 
 				<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn btn-success btn-large offset4 top_bump" data-target="#scores_modal"  data-toggle="modal" style="display: none;">Enter Scores</a>	
 				<!-- *BTN BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING -->
-				<a type="button" id="tempdelete" role="button" class="btn">DEV DELETE</a>
+				<!-- <a type="button" id="tempdelete" role="button" class="btn">DEV DELETE</a> -->
 			</div>
 			<table id="schedule_table" class="span6" style="margin-top: 10px;">
 			</table>
