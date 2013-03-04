@@ -22,6 +22,10 @@
 
 		$('#mytable').tablesorter(); 
 
+		//===========================================================
+		//                ** PAGELOAD AJAX CALLS **
+		//===========================================================
+
 		$.ajax({
 			type: 'GET',
 			url: '/backliftapp/results',
@@ -68,7 +72,13 @@
 			}
 		});  //end start season call 
 
-  //end print standings/schedule call  
+		//===========================================================
+		//                ** END PAGELOAD AJAX CALLS **
+		//===========================================================
+
+		//===========================================================
+		//                ** FORM VALIDATION **
+		//===========================================================
 
 		var validate = $("#modal_form").validate({
 			rules: {
@@ -113,16 +123,30 @@
 			}
 		}); //end validation func
 
+		//===========================================================
+		//                ** END FORM VALIDATION **
+		//===========================================================
+
+		//===========================================================
+		//                ** MAX TEAM LIMIT FUNCTION **
+		//===========================================================
+
 		$('#create_team').on('show', function (e) { // max team limit function
     		if (league_array[0].length === 8) {
     			$('.alert').show();
     			return e.preventDefault();
     		};  	
-		}); //end team limit func
+		});
+
+		//===========================================================
+		//                ** END MAX TEAM LIMIT FUNCTION **
+		//===========================================================
+
+		//===========================================================
+		//                ** SAVE SCORES CLICK EVENT **
+		//===========================================================
 
 		$('#save_scores').click(function (){
-
-		
 			//loop over control groups, grab data, push object to week array. push week array to results_array
 			var count = 1;
 
@@ -145,8 +169,7 @@
 					success: function (data, game) {
 						assignWLs (data);
 						resultsPush(game);
-						scheduleCall();
-						
+						//scheduleCall();					
 					}			 
 				}); 
 			});
@@ -160,43 +183,11 @@
 				}
 			};
 
-		}); //end score entry click event
+		}); 
 
-		function dataWipeRes (data) {
-			console.log("wipe");
-			$.each(data, function(index){
-				id = data[index].id;
-				$.ajax({
-					url: "backliftapp/results/" + id,
-					type: "DELETE",
-					dataType: "json",
-				});
-			})
-		};
-
-		function dataWipeStrt (data) {
-			console.log("wipe");
-			$.each(data, function(index){
-				id = data[index].id;
-				$.ajax({
-	  		  		url: "backliftapp/start/" + id,
-					type: "DELETE",
-					dataType: "json",
-				});
-			})
-		};
-
-		function dataWipeTeam (data) {
-			console.log("wipe");
-			$.each(data, function(index){
-				id = data[index].id;
-				$.ajax({
-	  		  		url: "backliftapp/team/" + id,
-					type: "DELETE",
-					dataType: "json",
-				});
-			})
-		};
+		//===========================================================
+		//                ** END SAVE SCORES CLICK EVENT **
+		//===========================================================
 
 		$('#createTeam').click(function () {	
 		//if team deleted from middle of field, id's stop corresponding to league_array.length. fix!
@@ -302,6 +293,40 @@
 	        return false;	        
 		}; //end sortTable
 
+		//===========================================================
+		//         ** START SEASON FUNCTIONS **
+		//===========================================================
+
+		function startSeason() { //starts season if button is pressed and conditions are met
+			if (league_array[0].length >= 4) {
+				var answer = confirm("Are you sure you want to start the season? There's no turning back!")
+				if (answer){
+					alert("Play ball!");
+					$.ajax({
+		    			url: "/backliftapp/start",
+						type: "POST",
+						dataType: "json",
+						data: { 
+							"trigger": "and so it begins"
+						}, 
+						success: function (data) {
+							$('<h4>This season is LIVE!</h4>').appendTo('#bigolhead');
+							$('body').addClass('nix_is_hidden');
+							$('#start_season_button').hide();
+							$('#create_team_button').hide();
+							$('#enter_scores_button').show();
+						}				 
+					});
+				}
+				else {
+					alert("What, get cold feet?");
+				}
+			}
+			else {
+				alert("You need at least 4 teams to start the season. Make some friends!");
+			}
+		}; //end startSeason func	
+
 		function buttonColor() {  //changes start season button color based on league size
 			if (league_array[0].length >= 4) {
 				$('#start_season_button').removeClass('btn-danger').addClass('btn-success');			
@@ -319,6 +344,63 @@
 				$('#start_season_button').removeClass('btn-success').addClass('btn-danger');
 			}
 		}; //end buttonColorDelVar
+
+		//===========================================================
+		//         ** END START SEASON BUTTON COLOR FUNCTIONS **
+		//===========================================================
+
+		//===========================================================
+		//              ** SERVER DATA CLEAR FUNCTIONS **
+		//===========================================================
+
+		function dataWipeRes (data) {
+			console.log("wipe");
+			$.each(data, function(index){
+				id = data[index].id;
+				$.ajax({
+					url: "backliftapp/results/" + id,
+					type: "DELETE",
+					dataType: "json",
+				});
+			})
+		};
+
+		function dataWipeStrt (data) {
+			console.log("wipe");
+			$.each(data, function(index){
+				id = data[index].id;
+				$.ajax({
+	  		  		url: "backliftapp/start/" + id,
+					type: "DELETE",
+					dataType: "json",
+				});
+			})
+		};
+
+		function dataWipeTeam (data) {
+			console.log("wipe");
+			$.each(data, function(index){
+				id = data[index].id;
+				$.ajax({
+	  		  		url: "backliftapp/team/" + id,
+					type: "DELETE",
+					dataType: "json",
+				});
+			})
+		};
+
+		//===========================================================
+		//                ** END SERVER DATA CLEAR FUNCTIONS **
+		//===========================================================
+
+		//===========================================================
+		//                ** SCHEDULE FUNCTIONS **
+		//===========================================================
+
+		//adds slide toggle to schedule table
+		$('#schedule_table').on('click', '.slide_head', function() {
+			$(this).next('.slide_body').slideToggle();
+		});//end slide function
 
 		function scheduleWrite(data) {  //writes schedule table
 
@@ -405,7 +487,7 @@
 					};
 				};	
 			};	
-		}; //end writeSchedOdd func
+		}; //end writeSchedOdd
 
 		function scheduleCall() {  //dynamically refreshes schedule table
 			$('#schedule_table').html(""); //clears schedule table
@@ -414,7 +496,15 @@
 				scheduleWrite(data); //populates scoreboard/schedule
 				}
 			});  
-		}; //end scheduleCall func
+		}; //end scheduleCall
+
+		//===========================================================
+		//                ** END SCHEDULE FUNCTIONS **
+		//===========================================================
+
+		//===========================================================
+		//                ** SCORE ENTRY FUNCTIONS **
+		//===========================================================
 	
 		function weekPop() {  //populates weeks selector in enter scores modal
 			$('#week_selector').html('');
@@ -484,41 +574,6 @@
             });
 		};//end enterScoresPop
 
-		//adds slide toggle to schedule table
-		$('#schedule_table').on('click', '.slide_head', function() {
-			$(this).next('.slide_body').slideToggle();
-		});//end slide function
-
-		function startSeason() { //starts season if button is pressed and conditions are met
-			if (league_array[0].length >= 4) {
-				var answer = confirm("Are you sure you want to start the season? There's no turning back!")
-				if (answer){
-					alert("Play ball!");
-					$.ajax({
-		    			url: "/backliftapp/start",
-						type: "POST",
-						dataType: "json",
-						data: { 
-							"trigger": "and so it begins"
-						}, 
-						success: function (data) {
-							$('<h4>This season is LIVE!</h4>').appendTo('#bigolhead');
-							$('body').addClass('nix_is_hidden');
-							$('#start_season_button').hide();
-							$('#create_team_button').hide();
-							$('#enter_scores_button').show();
-						}				 
-					});
-				}
-				else {
-					alert("What, get cold feet?");
-				}
-			}
-			else {
-				alert("You need at least 4 teams to start the season. Make some friends!");
-			}
-		}; //end startSeason func
-
 		function assignWLs (data) {
 			var chop, teams, team1, team2;
 
@@ -567,8 +622,12 @@
 					},
 				}); //end PUT
 			}
-		};
-	
+		}; //end assign WLs func
+
+
+		//===========================================================
+		//                ** END SCORE ENTRY FUNCTIONS **
+		//===========================================================
 
 		// function idWrite () {
 		// 	for (var i = 0; i < league_array[0].length + 1; i++) {
