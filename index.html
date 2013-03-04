@@ -26,7 +26,7 @@
 			type: 'GET',
 			url: '/backliftapp/results',
 			success: function (data) {
-				//dataWipe(data); //***WIPES DATA - TESTING ONLY***
+				//dataWipeRes(data); //***WIPES DATA - TESTING ONLY***
 				results_array.push(data);
 				weekPop(); //populates weeks menu
 			}
@@ -36,7 +36,7 @@
 			type: 'GET', 
 			url: '/backliftapp/team', 
 			success: function (data) {
-				//dataWipe(data);
+				//dataWipeTeam(data);
 				league_array.push(data); 
 				$.ajax({
 					type: 'GET', 
@@ -44,9 +44,9 @@
 					success: function (data) {
 						printTeam(data); // populates table on load
 						scheduleWrite(data); //populates scoreboard/schedule
+						buttonColor(); //changes start season button color based on league size
 						weekPop(); //populates weeks menu
 						enterScoresPop(data); //populates enter scores modal
-						buttonColor(); //changes start season button color based on league size
 						sortTable(); // loads and triggers tablesorter on an empty table
 					}
 				}); 
@@ -64,7 +64,7 @@
 					$('#start_season_button').hide();
 					$('#enter_scores_button').show();
 				}
-				//dataWipe(data);	//***WIPES DATA - TESTING ONLY***		
+				//dataWipeStrt(data);	//***WIPES DATA - TESTING ONLY***		
 			}
 		});  //end start season call 
 
@@ -142,10 +142,11 @@
 					type: "POST",
 					dataType: "json",
 					data: game,
-					success: function (game) {
+					success: function (data, game) {
+						assignWLs (data);
 						resultsPush(game);
 						scheduleCall();
-
+						
 					}			 
 				}); 
 			});
@@ -159,41 +160,43 @@
 				}
 			};
 
-			$.ajax({
-				type: 'GET',
-				url: '/backliftapp/results',
-				success: function (data) {
-					assignWLs (data);
-				}
-			});
-
 		}); //end score entry click event
 
-		function dataWipe (data) {
+		function dataWipeRes (data) {
 			console.log("wipe");
 			$.each(data, function(index){
 				id = data[index].id;
 				$.ajax({
 					url: "backliftapp/results/" + id,
-	  		  		//url: "backliftapp/start/" + id,
-	  		  		//url: "backliftapp/team/" + id,
 					type: "DELETE",
 					dataType: "json",
 				});
 			})
 		};
 
-		//*CLICK BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING
-		$('#tempdelete').click(function () {
-			$.ajax({
-				//url: "backliftapp/results/cc9604d4-b7ed-4015-899e-07db31449a82",
-  		  		//url: "backliftapp/start/43c5bea4-d3ba-4c1a-a0f8-da6f36f12010",
-				type: "DELETE",
-				dataType: "json",
-				success: function() {
-				}
-			});
-		}); //end DEV DELETE func
+		function dataWipeStrt (data) {
+			console.log("wipe");
+			$.each(data, function(index){
+				id = data[index].id;
+				$.ajax({
+	  		  		url: "backliftapp/start/" + id,
+					type: "DELETE",
+					dataType: "json",
+				});
+			})
+		};
+
+		function dataWipeTeam (data) {
+			console.log("wipe");
+			$.each(data, function(index){
+				id = data[index].id;
+				$.ajax({
+	  		  		url: "backliftapp/team/" + id,
+					type: "DELETE",
+					dataType: "json",
+				});
+			})
+		};
 
 		$('#createTeam').click(function () {	
 		//if team deleted from middle of field, id's stop corresponding to league_array.length. fix!
@@ -517,75 +520,53 @@
 		}; //end startSeason func
 
 		function assignWLs (data) {
+			var chop, teams, team1, team2;
 
-			for (var index = 0; index < data.length; index++) {
+			chop = data.gameId;
+			teams = chop.toString().split('');
+			team1 = teams[0];
+			team2 = teams[1];
 
-				var chop, teams, team1, team2;
-
-				chop = data[index].gameId;
-				teams = chop.toString().split('');
-				team1 = teams[0];
-				team2 = teams[1];
-
-				if (data[index].score1 > data[index].score2) {
-					console.log(team1);
-					//get win total, add one, send back
-					$.ajax({
-		    			url: "backliftapp/team/" + team1,
-						type: "PUT",
-						dataType: "json",
-						data: { 
-							wins: +league_array[0][team1 - 1].wins + 1 
-						},
-						success: function() {
-							console.log("check1a");
-							
-						}	
-					});	
-					console.log(team2);			
-					//get loss total, add one, send back
-					$.ajax({
-		    			url: "backliftapp/team/" + team2,
-						type: "PUT",
-						dataType: "json",
-						data: { 
-							losses: +league_array[0][team2 - 1].losses + 1 
-						},
-						complete: function() {
-							console.log("check2a");
-						}	
-					});	
-				} 
-				else {
-					console.log(team1);
-					//get loss total, add one, send back
-					$.ajax({
-		    			url: "backliftapp/team/" + team1,
-						type: "PUT",
-						dataType: "json",
-						data: { 
-							losses: +league_array[0][team1 - 1].losses + 1 
-						},
-						success: function() {
-							console.log("check3a");
-						}	
-					});
-
-					console.log(team2);
-					//get win total, add one, send back
-					$.ajax({
-		    			url: "backliftapp/team/" + team2,
-						type: "PUT",
-						dataType: "json",
-						data: { 
-							wins: +league_array[0][team2 - 1].wins + 1 
-						},
-						success: function() {
-							console.log("check4a");
-						}	
-					});
-				}
-			};
+			if (data.score1 > data.score2) {
+				//get win total, add one, send back
+				$.ajax({
+	    			url: "backliftapp/team/" + team1,
+					type: "PUT",
+					dataType: "json",
+					data: { 
+						wins: +league_array[0][team1 - 1].wins + 1 
+					},
+				});	//end PUT			
+				//get loss total, add one, send back
+				$.ajax({
+	    			url: "backliftapp/team/" + team2,
+					type: "PUT",
+					dataType: "json",
+					data: { 
+						losses: +league_array[0][team2 - 1].losses + 1 
+					},
+				});	//end PUT
+			} 
+			else {
+				//get loss total, add one, send back
+				$.ajax({
+	    			url: "backliftapp/team/" + team1,
+					type: "PUT",
+					dataType: "json",
+					data: { 
+						losses: +league_array[0][team1 - 1].losses + 1 
+					},	
+				}); //end PUT
+				//get win total, add one, send back
+				$.ajax({
+	    			url: "backliftapp/team/" + team2,
+					type: "PUT",
+					dataType: "json",
+					data: { 
+						wins: +league_array[0][team2 - 1].wins + 1 
+					},
+				}); //end PUT
+			}
 		};
 	
 
@@ -633,8 +614,6 @@
 				<a type="button" id="start_season_button" role="button" class="btn btn-large offset1">Start Season</a>
 
 				<a href="#scores_modal" type="button" id="enter_scores_button" role="button" class="btn btn-success btn-large offset4 top_bump" data-target="#scores_modal"  data-toggle="modal" style="display: none;">Enter Scores</a>	
-				<!-- *BTN BELOW DELETES IND. ENTRIES IN START DATABASE; USED FOR TESTING -->
-				<!-- <a type="button" id="tempdelete" role="button" class="btn">DEV DELETE</a> -->
 			</div>
 			<table id="schedule_table" class="span6" style="margin-top: 10px;">
 			</table>
@@ -686,13 +665,12 @@
 				      <input type="text" class="team_inputs" id="zip" name="zip" placeholder="216">
 				    </div>
 				  </div>
-				  <div class="control-group">
-				    <div class="controls">
-				      <button id="createTeam" class="submit" onclick="return false">Submit</button>
-				    </div>
-				  </div>
 				</form>
 			</div>
+		    <div class="modal-footer">	
+		      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>			  
+		      <button id="createTeam" class="submit btn btn-primary" onclick="return false">Submit</button>	   
+		    </div>			
 		</div> <!-- end create team modal -->	
 
 		<!-- enter scores modal -->
@@ -714,7 +692,7 @@
 			</form>
 		  </div>
 		  <div class="modal-footer">
-		  	<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		  	<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 		    <a href="#" id="save_scores" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Save Scores</a>
 		  </div>
 		</div>
