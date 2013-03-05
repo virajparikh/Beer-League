@@ -107,7 +107,18 @@
 		$('#save_scores').click(function (){
 			//loop over control groups, grab data, push object to week array. push week array to results_array
 			var count = 1;
+			var loop_count = 0;
 
+			var schedule;
+
+			if (league_array[0].length % 2 == 0) {
+				console.log('mark1');
+				schedule = sched[0].length;
+			}
+			else {
+				console.log('mark2');
+				schedule = sched[0].length - 1;
+			}
 
 			$('.game_wraps').each(function(index){ 
 				var gameId = $('#id_' + count).val() + $('#id_' + (count + 1)).val();
@@ -126,8 +137,18 @@
 					dataType: "json",
 					data: game,
 					success: function (data, game) {
-						assignWLs (data);
-						//pageRefresh();				
+						assignWLs (data);	
+						loop_count++;	
+						if (loop_count == schedule) {
+							$.ajax({
+								url: "/backliftapp/results",
+								type: "GET",
+								dataType: "json",
+								success: function (data, game) {
+									pageRefresh();
+								}
+							})
+						}		
 					}			 
 				});											 
 			}); 
@@ -140,7 +161,6 @@
 					results_array.push(game);
 				}
 			};	
-
 		}); 
 
 		//===========================================================
@@ -311,7 +331,6 @@
 				type: 'GET',
 				url: '/backliftapp/results',
 				success: function (data) {
-					results_array.push(data);
 					$.ajax({
 						type: 'GET', 
 						url: '/backliftapp/team', 
@@ -330,40 +349,6 @@
 				}
 			});
 		};
-
-		// function pageRefresh () {
-		// 	$.ajax({
-		// 		type: 'GET',
-		// 		url: '/backliftapp/results',
-		// 		success: function (data) {
-		// 			data_retrieved++;
-		// 			if (data_retrieved == 2) {
-		// 				initializePage();
-		// 			};
-		// 		}
-		// 	});
-
-		// 	$.ajax({
-		// 		type: 'GET', 
-		// 		url: '/backliftapp/team', 
-		// 		success: function (data) { 
-		// 			printTeam(data); // populates table on load
-		// 			data_retrieved++;
-		// 			if (data_retrieved == 2) {
-		// 				initializePage();
-		// 			};
-		// 			enterScoresPop(); //populates enter scores modal
-		// 			sortTable(); // loads and triggers tablesorter on an empty table
-		// 		}
-		// 	});   //end print standings/schedule call  
-
-		// 	function initializePage() {
-		// 		$('#standings').html('');
-		// 		scheduleWrite(); //populates scoreboard/schedule
-		// 		buttonColor(); //changes start season button color based on league size
-		// 		weekPop(); //populates weeks menu
-		// 	}
-		// };
 
 		//===========================================================
 		//             ** END PAGE REFRESH FUNCTIONS **
@@ -736,6 +721,7 @@
 		//===========================================================
 
 		function resetSeason () {
+			var refresh_count = 0;
 
 			$.ajax({ //wipes results from server
 				type: 'GET',
@@ -749,47 +735,63 @@
 							type: "DELETE",
 							dataType: "json",
 							success: function() {
-								$.ajax({ //wipes start trigger from server
-									type: 'GET',
-									url: '/backliftapp/start',
-									success: function (data) {
-										console.log("wipe");
-										$.each(data, function(index){
-											id = data[index].id;
-											$.ajax({
-												url: "backliftapp/start/" + id,
-												type: "DELETE",
-												dataType: "json",
-												success: function() {
-													$.ajax({ //replaces wins/losses with 0's
-														type: 'GET',
-														url: '/backliftapp/team',
-														success: function (data) {
-															console.log('Zeroing wins/losses');
-															$.each(data, function(index){
-																id = data[index].id;
-																$.ajax({
-																	url: "backliftapp/team/" + id,
-																	type: "PUT",
-																	dataType: "json",
-																	data: { 
-																		wins: 0,
-																		losses: 0
-																	},
-																	success: function () {
-																	}
-																});
-															});
-														}
-													});													
-												}
-											});
-										});				
-									}
-								});
+								
 							}
 						});
 					});				
+				}
+			});		
+
+			$.ajax({ //wipes start trigger from server
+				type: 'GET',
+				url: '/backliftapp/start',
+				success: function (data) {
+					console.log("wipe");
+					$.each(data, function(index){
+						id = data[index].id;
+						$.ajax({
+							url: "backliftapp/start/" + id,
+							type: "DELETE",
+							dataType: "json",
+							success: function() {
+								$('#bigolhead h4').text('');
+								$('body').removeClass('nix_is_hidden');
+								$('#create_team_button').show();
+								$('#start_season_button').show();
+								$('#enter_scores_button').hide();
+								$('#reset_season_button').hide();											
+							}
+						});
+					});				
+				}
+			});
+
+			$.ajax({ //replaces wins/losses with 0's
+				type: 'GET',
+				url: '/backliftapp/team',
+				success: function (data) {
+					console.log('Zeroing wins/losses');
+					$.each(data, function(index){
+						id = data[index].id;
+						$.ajax({
+							url: "backliftapp/team/" + id,
+							type: "PUT",
+							dataType: "json",
+							data: { 
+								wins: 0,
+								losses: 0
+							},
+							success: function () {
+								refresh_count++;
+								if (refresh_count >= league_array[0].length) {
+									console.log("fresh start!");
+									$('#standings').html('');
+									$('#table_schedule').html('');
+									pageLoad();
+								};
+							}
+						});
+					});
 				}
 			});
 		};
