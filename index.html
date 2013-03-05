@@ -108,6 +108,7 @@
 			//loop over control groups, grab data, push object to week array. push week array to results_array
 			var count = 1;
 
+
 			$('.game_wraps').each(function(index){ 
 				var gameId = $('#id_' + count).val() + $('#id_' + (count + 1)).val();
 				var score1 = $('#team_' + count).val();
@@ -126,11 +127,10 @@
 					data: game,
 					success: function (data, game) {
 						assignWLs (data);
-						resultsPush(game);
-						//scheduleCall();					
+						//pageRefresh();				
 					}			 
-				}); 
-			});
+				});											 
+			}); 
 
 			function resultsPush (game) {
 				if (results_array.length === 0) {
@@ -139,7 +139,7 @@
 				else {
 					results_array.push(game);
 				}
-			};
+			};	
 
 		}); 
 
@@ -244,7 +244,7 @@
 		//===========================================================
 
 		//===========================================================
-		//                 ** PAGELOAD FUNCTIONS **
+		//                 ** PAGE LOAD FUNCTIONS **
 		//===========================================================
 
 		function pageLoad () {
@@ -263,8 +263,7 @@
 			$.ajax({
 				type: 'GET', 
 				url: '/backliftapp/team', 
-				success: function (data) {
-					console.log(data); 
+				success: function (data) { 
 					league_array.push(data);
 					printTeam(data); // populates table on load
 					data_retrieved++;
@@ -277,7 +276,6 @@
 			});   //end print standings/schedule call  
 
 			function initializePage() {
-				// do stuff
 				scheduleWrite(); //populates scoreboard/schedule
 				buttonColor(); //changes start season button color based on league size
 				weekPop(); //populates weeks menu
@@ -300,7 +298,75 @@
 		};
 
 		//===========================================================
-		//             ** END PAGELOAD FUNCTIONS **
+		//             ** END PAGE LOAD FUNCTIONS **
+		//===========================================================
+
+		//===========================================================
+		//                 ** PAGE REFRESH FUNCTIONS **
+		//===========================================================
+
+		function pageRefresh () {
+			console.log('refresh!');
+			$.ajax({
+				type: 'GET',
+				url: '/backliftapp/results',
+				success: function (data) {
+					results_array.push(data);
+					$.ajax({
+						type: 'GET', 
+						url: '/backliftapp/team', 
+						success: function (data) { 
+							league_array.push(data);
+							$('#standings').html('');
+							$('#schedule_table').html('');
+							printTeam(data); // populates table on load
+							enterScoresPop(); //populates enter scores modal
+							scheduleWrite(); //populates scoreboard/schedule
+							buttonColor(); //changes start season button color based on league size
+							weekPop(); //populates weeks menu
+							sortTable(); // loads and triggers tablesorter on an empty table
+						}
+					});   		
+				}
+			});
+		};
+
+		// function pageRefresh () {
+		// 	$.ajax({
+		// 		type: 'GET',
+		// 		url: '/backliftapp/results',
+		// 		success: function (data) {
+		// 			data_retrieved++;
+		// 			if (data_retrieved == 2) {
+		// 				initializePage();
+		// 			};
+		// 		}
+		// 	});
+
+		// 	$.ajax({
+		// 		type: 'GET', 
+		// 		url: '/backliftapp/team', 
+		// 		success: function (data) { 
+		// 			printTeam(data); // populates table on load
+		// 			data_retrieved++;
+		// 			if (data_retrieved == 2) {
+		// 				initializePage();
+		// 			};
+		// 			enterScoresPop(); //populates enter scores modal
+		// 			sortTable(); // loads and triggers tablesorter on an empty table
+		// 		}
+		// 	});   //end print standings/schedule call  
+
+		// 	function initializePage() {
+		// 		$('#standings').html('');
+		// 		scheduleWrite(); //populates scoreboard/schedule
+		// 		buttonColor(); //changes start season button color based on league size
+		// 		weekPop(); //populates weeks menu
+		// 	}
+		// };
+
+		//===========================================================
+		//             ** END PAGE REFRESH FUNCTIONS **
 		//===========================================================
 
 		//===========================================================
@@ -536,7 +602,7 @@
 		//===========================================================
 		//                ** SCORE ENTRY FUNCTIONS **
 		//===========================================================
-	
+		
 		function weekPop() {  //populates weeks selector in enter scores modal
 			$('#week_selector').html('');
 			$('#week_selector').prepend('<option>Select:</option>');	
@@ -711,7 +777,6 @@
 																		losses: 0
 																	},
 																	success: function () {
-																		
 																	}
 																});
 															});
@@ -727,8 +792,6 @@
 					});				
 				}
 			});
-		$('#standings').html('');
-		pageLoad();
 		};
 
 		//===========================================================
