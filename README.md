@@ -24,6 +24,10 @@
 
 ##WHAT ISN'T WORKING --
 
-After saving a round of scores, you __need to manually refresh page__. Everything is saved properly, but requires page refresh to show up. Otherwise, schedule table and save scores modal will not be properly updated until the next refresh. 
+*	After saving a round of scores, you __need to manually refresh page__. Everything is saved properly, but schedule table and save scores modal will not be properly updated until the next manual page refresh. 
 
-If you delete a team from the middle of the teams list, score assignments will be off. Just don't delete a team from middle of field.
+*	If you delete a team from the middle of the teams list, score assignments will be off. Just don't delete a team from middle of field.
+
+*	Validation not preventing form submit. 
+
+*	Score submit form has no current validation; does not prevent ties.
