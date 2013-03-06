@@ -105,18 +105,16 @@
 		//===========================================================
 
 		$('#save_scores').click(function (){
-			//loop over control groups, grab data, push object to week array. push week array to results_array
+			//loop over control groups, grab data, push object to results_array
 			var count = 1;
 			var loop_count = 0;
 
 			var schedule;
 
 			if (league_array[0].length % 2 == 0) {
-				console.log('mark1');
 				schedule = sched[0].length;
 			}
 			else {
-				console.log('mark2');
 				schedule = sched[0].length - 1;
 			}
 
@@ -178,7 +176,7 @@
 		$('#createTeam').click(function () {	
 		//if team deleted from middle of field, id's stop corresponding to league_array.length. fix!
 			var team = {
-				//id: idWrite(),
+				//id: idWrite(), IGNORE -- NONFUNCTIONAL CODE
 				id: league_array[0].length + 1, 
 	 			teamName: $('#teamName').val(),
 			    firstName: $('#mgr_fname').val(),
@@ -256,7 +254,7 @@
 				dataType: "json",
 				complete: function() {
 					league_array[0].splice($(this).attr('data-index'), 1); //removes entry from league_array
-					scheduleCall(); //dynamically changes schedule on add/rm team //may need Call - 
+					scheduleCall(); //dynamically changes schedule on add/rm team
 				}	
 			});
 			buttonColorDelVar(); //modified button color func for delete func only
@@ -330,23 +328,19 @@
 		//===========================================================
 
 		function pageRefresh () {
-			console.log('refresh!');
 			$.ajax({
 				type: 'GET',
 				url: '/backliftapp/results',
 				success: function (data) {
-					console.log("results get");
 					$.ajax({
 						type: 'GET', 
 						url: '/backliftapp/team', 
 						success: function (data) { 
-							console.log("team get");
 							league_array.push(data);
 							$('#standings').html('');
 							printTeam(data); // populates table on load
 							enterScoresPop(); //populates enter scores modal
-							console.log("schedule write");
-							//scheduleWrite(); //populates scoreboard/schedule -- not working properly
+							//scheduleWrite(); //populates scoreboard/schedule -- NOT WORKING PROPERLY
 							buttonColor(); //changes start season button color based on league size
 							weekPop(); //populates weeks menu
 							sortTable(); // loads and triggers tablesorter on an empty table
@@ -735,7 +729,6 @@
 				type: 'GET',
 				url: '/backliftapp/results',
 				success: function (data) {
-					console.log("wipe");
 					$.each(data, function(index){
 						id = data[index].id;
 						$.ajax({
@@ -754,7 +747,6 @@
 				type: 'GET',
 				url: '/backliftapp/start',
 				success: function (data) {
-					console.log("wipe");
 					$.each(data, function(index){
 						id = data[index].id;
 						$.ajax({
@@ -778,7 +770,6 @@
 				type: 'GET',
 				url: '/backliftapp/team',
 				success: function (data) {
-					console.log('Zeroing wins/losses');
 					$.each(data, function(index){
 						id = data[index].id;
 						$.ajax({
@@ -792,7 +783,6 @@
 							success: function () {
 								refresh_count++;
 								if (refresh_count >= league_array[0].length) {
-									console.log("fresh start!");
 									$('#standings').html('');
 									$('#table_schedule').html('');
 									pageLoad();
