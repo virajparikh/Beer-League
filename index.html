@@ -16,9 +16,9 @@
 		var data_retrieved = 0;
 		var league_array = [];
 		var results_array = [];
-		var clicker = 0;
 		var win_per = 0;
 		var sched;
+		var clicker = 0;
 		//hide team limit alert upon load
 		$('.alert').hide();
 
@@ -31,7 +31,7 @@
 		pageLoad ();
 
 		//===========================================================
-		//                ** END PAGELOAD AJAX CALLS **
+		//                ** END PAGELOAD CALL **
 		//===========================================================
 
 		//===========================================================
@@ -147,7 +147,7 @@
 								success: function (data, game) {
 									pageRefresh();
 								}
-							})
+							});
 						}		
 					}			 
 				});											 
@@ -162,6 +162,10 @@
 				}
 			};	
 		}); 
+
+		$('.score_inputs').each(function(){
+			$(this).val('');
+		});
 
 		//===========================================================
 		//              ** END SAVE SCORES CLICK EVENT **
@@ -252,7 +256,7 @@
 				dataType: "json",
 				complete: function() {
 					league_array[0].splice($(this).attr('data-index'), 1); //removes entry from league_array
-					scheduleCall(); //dynamically changes schedule on add/rm team
+					scheduleCall(); //dynamically changes schedule on add/rm team //may need Call - 
 				}	
 			});
 			buttonColorDelVar(); //modified button color func for delete func only
@@ -331,16 +335,18 @@
 				type: 'GET',
 				url: '/backliftapp/results',
 				success: function (data) {
+					console.log("results get");
 					$.ajax({
 						type: 'GET', 
 						url: '/backliftapp/team', 
 						success: function (data) { 
+							console.log("team get");
 							league_array.push(data);
 							$('#standings').html('');
-							$('#schedule_table').html('');
 							printTeam(data); // populates table on load
 							enterScoresPop(); //populates enter scores modal
-							scheduleWrite(); //populates scoreboard/schedule
+							console.log("schedule write");
+							//scheduleWrite(); //populates scoreboard/schedule -- not working properly
 							buttonColor(); //changes start season button color based on league size
 							weekPop(); //populates weeks menu
 							sortTable(); // loads and triggers tablesorter on an empty table
@@ -486,9 +492,10 @@
 			$('#schedule_table').html(''); //clears schedule table
 			$.ajax({type: 'GET', url: '/backliftapp/team', 
 				success: function (data) {			
-				scheduleWrite(data); //populates scoreboard/schedule
+					scheduleWrite(data); //populates scoreboard/schedule
 				}
 			});  
+			clicker = 0;
 		}; //end scheduleCall
 
 		//adds slide toggle to schedule table
@@ -525,7 +532,8 @@
 
 			if (league_array[0].length >= 4) {
 				prepTable();
-				var clicker = 0;
+				$('#schedule_head' + i).html('');
+				$('#schedule_body' + i).html('');
 				for (var i = 0; i < sched.length; i++) { 	 //weeks loop
 					$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups</a></th></tr>').appendTo('#schedule_head' + i);
 					for (var j = 0; j < sched[i].length; j++) { 	//games loop
@@ -539,8 +547,9 @@
 		function writeSchedOdd(sched) { //writes scheduletable for odd-# leagues (5,7 teams)
 
 			if (league_array[0].length >= 4) {
-				prepTable();		
-				
+				prepTable();
+				$('#schedule_head' + i).html('');
+				$('#schedule_body' + i).html('');
 				for (var i = 0; i < sched.length; i++) { 	 //weeks loop
 					$('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(Bye week: ' + league_array[0][sched[i][0][1] - 2].teamName + ')</span></a></th></tr>').appendTo('#schedule_head' + i);
 					for (var j = 1; j < sched[i].length; j++) { 	//games loop
@@ -573,7 +582,6 @@
 					}
 				});
 			}
-
 			$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + league_array[0][sched[i][j][0] - n].teamName + " vs. " + league_array[0][sched[i][j][1] - n].teamName + "</td></tr>").appendTo('#schedule_body' + i);
 			$('<tr><td>' + league_array[0][sched[i][j][0] - n].teamName + '</td><td>' + score_grab1 + '</td></tr>').appendTo('#schedule_body' + i);
 			$('<tr><td>' + league_array[0][sched[i][j][1] - n].teamName + '</td><td>' + score_grab2 + '</td></tr>').appendTo('#schedule_body' + i);
