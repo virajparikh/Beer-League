@@ -1,4 +1,4 @@
-Phase 1
+####Phase 1
 
 -using Bootstrap - done.
 
@@ -10,20 +10,20 @@ Phase 1
 
 -show team info on hover - working.
 
-Phase 2
+####Phase 2
 
 -uses pre-defined schedule; differentiates automatically depending on league size. Accounts for bye week. Working.
 
 -capture scores by week: working. 
 
-	Schedule updates with MANUAL page refresh. Work in progress.
+*	On saving scores, Schedule and save scores modal update with MANUAL page refresh. Work in progress.
 
 -Win/Loss calculated automatically on score entry, standings update dynamically without manual refresh.
 
 -Standings sortable by column by manually clicking table head.
 
-WHAT ISN'T WORKING --
+##WHAT ISN'T WORKING --
 
-After saving a round of scores, you need to manually refresh page. Otherwise, schedule table and save scores modal will not be properly updated. 
+After saving a round of scores, you __need to manually refresh page__. Everything is saved properly, but requires page refresh to show up. Otherwise, schedule table and save scores modal will not be properly updated until the next refresh. 
 
 If you delete a team from the middle of the teams list, score assignments will be off. Just don't delete a team from middle of field.
