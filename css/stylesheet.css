@@ -94,7 +94,7 @@ div#game_group>h4 {
 /* FORM MODALS */
 
 div.modal-body {
-    max-height: 600px;
+    max-height: 400px;
 }
 
 form#team_form input, form#score_form input{
@@ -131,4 +131,8 @@ label.error {
   color: red;
   padding: 2px 8px;
   margin-top: 2px;
+}
+div#tieErrorAlert {
+  display: center;
+  text-align: center;
 }
