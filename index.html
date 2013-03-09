@@ -16,7 +16,7 @@
   <script src="js/schedule.js"></script>
 
   <script>
-  $(document).ready(function(){
+  $( document ).ready( function(  ){
 
     var league_array = [];
     // var win_per;
@@ -27,7 +27,7 @@
     //                ** INITIALIZE TABLE SORTER **
     //===========================================================
 
-    // $('#mytable').tablesorter();
+    // $( '#mytable' ).tablesorter(  );
 
     //===========================================================
     //                ** END TABLE SORTER **
@@ -37,7 +37,7 @@
     //                ** LOAD PAGE DATA **
     //===========================================================
 
-    pageLoad ();
+    pageLoad (  );
 
     //===========================================================
     //                ** END LOAD PAGE DATA **
@@ -48,7 +48,7 @@
     //===========================================================
 
     // team form validation options
-    var validate = $("#team_form").validate({
+    var validate = $( "#team_form" ).validate( {
       rules: {
         teamName: {
           minlength: 2,
@@ -81,16 +81,16 @@
           rangelength: [3, 3]
         }
       },
-      highlight: function(element) {
-        $(element).closest('.control-group').removeClass('success').addClass('error');
+      highlight: function( element ) {
+        $( element ).closest( '.control-group' ).removeClass( 'success' ).addClass( 'error' );
       },
-      success: function(element) {
-        element.text('OK!').addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+      success: function( element ) {
+        element.text( 'OK!' ).addClass( 'valid' ).closest( '.control-group' ).removeClass( 'error' ).addClass( 'success' );
       }
-    }); //end validation function
+    } ); //end validation function
 
     // score form validation options
-    var validate = $("#score_form").validate({
+    var validate = $( "#score_form" ).validate( {
       rules: {
         team_one_score: {
           digits: true,
@@ -103,13 +103,13 @@
           rangelength: [1, 3]
         }
       },
-      highlight: function(element) {
-        $(element).closest('.control-group').removeClass('success').addClass('error');
+      highlight: function( element ) {
+        $( element ).closest( '.control-group' ).removeClass( 'success' ).addClass( 'error' );
       },
-      success: function(element) {
-        element.text('OK!').addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+      success: function( element ) {
+        element.text( 'OK!' ).addClass( 'valid' ).closest( '.control-group' ).removeClass( 'error' ).addClass( 'success' );
       }
-    }); //end validation function
+    } ); //end validation function
 
     //===========================================================
     //                ** END FORM VALIDATION **
@@ -120,12 +120,12 @@
     //===========================================================
 
     // show alert if number of teams equals 8
-    $('#create_team').on('show', function (e) { 
-      if (league_array.length === 8) {
-        $('.alert').show();
-        return e.preventDefault();
+    $( '#create_team' ).on( 'show', function ( e ) { 
+      if ( league_array.length === 8 ) {
+        $( '.alert' ).show(  );
+        return e.preventDefault(  );
       };    
-    }); // end click
+    } ); // end click
 
     //===========================================================
     //                ** END MAX TEAM LIMIT FUNCTION **
@@ -138,18 +138,18 @@
     // ID's stop corresponding to league_array.length.
 
     // click event on team form submit button
-    $('#createTeam').click(function () {  
+    $( '#createTeam' ).click( function (  ) {  
 
       // determine if input values are valid
-      if (!$("#team_form input").valid()) {
+      if ( !$( "#team_form input" ).valid(  ) ) {
         return;
       };
 
       // // retrieve team data from server
-      // $.ajax({
+      // $.ajax( {
       //   type: 'GET', 
       //   url: '/backliftapp/team', 
-      //   success: function (data) {
+      //   success: function ( data ) {
 
       //     league_array = data;
 
@@ -157,58 +157,58 @@
           // league_array[league_array.length - 1].id + 1
           var team = {
             id: league_array.length + 1,
-            teamName: $('#teamName').val(),
-            firstName: $('#mgr_fname').val(),
-            lastName: $('#mgr_lname').val(),
-            phoneNumber: $('#phoneNumber').val(),
-            sponsor: $('#sponsor').val(),
-            zip: "37" + $('#zip').val(),
+            teamName: $( '#teamName' ).val(  ),
+            firstName: $( '#mgr_fname' ).val(  ),
+            lastName: $( '#mgr_lname' ).val(  ),
+            phoneNumber: $( '#phoneNumber' ).val(  ),
+            sponsor: $( '#sponsor' ).val(  ),
+            zip: "37" + $( '#zip' ).val(  ),
             wins: 0,
             losses: 0     
           };
 
           // add single row on form submit
-          lineWrite();
+          lineWrite(  );
 
-          $.ajax({
+          $.ajax( {
             url: "/backliftapp/team",
             type: "POST",
             dataType: "json",
             data: team,
-            success: function () {
+            success: function (  ) {
 
               // push new team onto league_array
-              league_array.push(team);
+              league_array.push( team );
 
               // change schedule with teams are added or removed
-              scheduleCall();
+              scheduleCall(  );
 
               // change start season button color based on league size
-              if (league_array.length >= 4) {
-                $('#start_season_button').removeClass('btn-danger').addClass('btn-success');      
+              if ( league_array.length >= 4 ) {
+                $( '#start_season_button' ).removeClass( 'btn-danger' ).addClass( 'btn-success' );      
               } else {
-                $('#start_season_button').removeClass('btn-success').addClass('btn-danger');
+                $( '#start_season_button' ).removeClass( 'btn-success' ).addClass( 'btn-danger' );
               };
 
             }        
-          }); // end POST
+          } ); // end POST
 
       //   }
-      // }); // end GET
+      // } ); // end GET
 
       // hide team form modal
-      $('#create_team').modal('hide');
+      $( '#create_team' ).modal( 'hide' );
 
       // clear team form inputs
-      clearForm();
+      clearForm(  );
 
       // clear validation status
-      validateClear();
+      validateClear(  );
 
       // load sort table on empty table  
-      sortTable();
+      sortTable(  );
 
-    }); // end click
+    } ); // end click
 
     //===========================================================
     //              ** END CREATE TEAM CLICK EVENT **
@@ -218,9 +218,9 @@
     //                ** START SEASON CLICK EVENT **
     //===========================================================
 
-    $('#start_season_button').click(function(){
-      startSeason();
-    }); // end click
+    $( '#start_season_button' ).click( function(  ){
+      startSeason(  );
+    } ); // end click
 
     //===========================================================
     //             ** END START SEASON CLICK EVENT **
@@ -231,13 +231,13 @@
     //===========================================================
 
     // click event on save scores button
-    $('#save_scores').click(function (){
+    $( '#save_scores' ).click( function (  ){
       // TO DO - TIES PSEUDO: for ties, write if/else statement.
       // LOOP through all score inputs; IF 2 paired scores are equal,
       // alert "no ties bub" & prevent default; else RUN all this stuff.
 
       // determine if input values are valid
-      if (!$("#score_form input").valid()) {
+      if ( !$( "#score_form input" ).valid(  ) ) {
         return;
       };
 
@@ -247,41 +247,41 @@
       var schedule;
 
       // shorten week by one game if odd number of teams
-      if (league_array.length % 2 == 0) {
+      if ( league_array.length % 2 == 0 ) {
         schedule = sched[0].length;
       } else {
         schedule = sched[0].length - 1;
       };
 
       // create empty array
-      var allScores = new Array();
+      var allScores = new Array(  );
 
       // add contents of score inputs to array
-      $(".score_entry").each(function() {
-        var score = $(this).val();
-        allScores.push(score);
-      });
+      $( ".score_entry" ).each( function(  ) {
+        var score = $( this ).val(  );
+        allScores.push( score );
+      } );
 
       // confirm contents of array      
-      console.log(allScores);
+      console.log( allScores );
 
       // show error and exit function if score pairs are equal
-      for (var i = 0; i < allScores.length; (i += 2)) {
-        if (allScores[i] == allScores[i + 1]) {
-          $("#tieErrorAlert").show();
+      for ( var i = 0; i < allScores.length; ( i += 2 ) ) {
+        if ( allScores[i] == allScores[i + 1] ) {
+          $( "#tieErrorAlert" ).show(  );
           return;
         };
       };
 
       // perform function for each game
-      $('.game_wraps').each(function(index){ 
+      $( '.game_wraps' ).each( function( index ){ 
 
         // fill variable with unique game identifier
-        var gameId = $('#id_' + count).val() + $('#id_' + (count + 1)).val();
+        var gameId = $( '#id_' + count ).val(  ) + $( '#id_' + ( count + 1 ) ).val(  );
 
         // fill variables with contents of score inputs
-        var score1 = $('#team_' + count).val();
-        var score2 = $('#team_' + (count + 1)).val();
+        var score1 = $( '#team_' + count ).val(  );
+        var score2 = $( '#team_' + ( count + 1 ) ).val(  );
 
         // create game object
         var game = {
@@ -294,54 +294,54 @@
         count += 2;
 
         // send game data to server
-        $.ajax({
+        $.ajax( {
           url: "/backliftapp/results",
           type: "POST",
           dataType: "json",
           data: game,
-          success: function (data, game) {
+          success: function ( data, game ) {
 
             // update team wins and losses
-            assignWLs(data); 
+            assignWLs( data ); 
 
             // increment counter
             loop_count++; 
 
             // retrive game data from server once all scores have been printed
-            if (loop_count == schedule) {
-              $.ajax({
+            if ( loop_count == schedule ) {
+              $.ajax( {
                 url: "/backliftapp/results",
                 type: "GET",
                 dataType: "json",
-                success: function (data, game) {
+                success: function ( data, game ) {
 
                   // reload page contents
-                  pageLoad();
+                  pageLoad(  );
 
                 }
-              }); // end GET
+              } ); // end GET
             }; // end if statement
 
           }   
-        }); // end POST
+        } ); // end POST
 
-      }); // end each
+      } ); // end each
 
       // hide score form modal
-      $('#scores_modal').modal('hide');
+      $( '#scores_modal' ).modal( 'hide' );
 
       // hide tie error message
-      $("#tieErrorAlert").hide();
+      $( "#tieErrorAlert" ).hide(  );
       
       // clear score form inputs
-      $('.score_inputs').each(function(){
-        $(this).val('');
-      });
+      $( '.score_inputs' ).each( function(  ){
+        $( this ).val( '' );
+      } );
 
       // clear validation status
-      validateClear();
+      validateClear(  );
 
-    }); // end click
+    } ); // end click
 
     //===========================================================
     //              ** END SAVE SCORES CLICK EVENT **
@@ -351,16 +351,16 @@
     //                ** RESET SEASON CLICK EVENT **
     //===========================================================
 
-    $('#reset_season_button').click(function(){
-      var answer = confirm("Are you sure you want to reset the season? All game results will be permanently erased!")
-        if (answer){
-          alert("Bye bye last season!");
-          resetSeason();
+    $( '#reset_season_button' ).click( function(  ){
+      var answer = confirm( "Are you sure you want to reset the season? All game results will be permanently erased!" )
+        if ( answer ){
+          alert( "Bye bye last season!" );
+          resetSeason(  );
         }
         else {
-          alert("Phew, that was a close one.");
+          alert( "Phew, that was a close one." );
         } 
-    });
+    } );
 
     //===========================================================
     //             ** END RESET SEASON CLICK EVENT **
@@ -370,26 +370,26 @@
     //                ** DELETE TEAM CLICK EVENT **
     //===========================================================
 
-    $('table').on('click', '.nix', function () {
-      $.ajax({
-          url: "backliftapp/team/" + $(this).attr('data-id'),
+    $( 'table' ).on( 'click', '.nix', function (  ) {
+      $.ajax( {
+          url: "backliftapp/team/" + $( this ).attr( 'data-id' ),
         type: "DELETE",
         dataType: "json",
-        complete: function() {
-          league_array.splice($(this).attr('data-index'), 1); //removes entry from league_array
-          scheduleCall(); //dynamically changes schedule on add/rm team
+        complete: function(  ) {
+          league_array.splice( $( this ).attr( 'data-index' ), 1 ); //removes entry from league_array
+          scheduleCall(  ); //dynamically changes schedule on add/rm team
         } 
-      });
+      } );
 
       // change start season button color based on league size
-      if (league_array.length >= 5) {
-        $('#start_season_button').removeClass('btn-danger').addClass('btn-success');
+      if ( league_array.length >= 5 ) {
+        $( '#start_season_button' ).removeClass( 'btn-danger' ).addClass( 'btn-success' );
       }else {
-        $('#start_season_button').removeClass('btn-success').addClass('btn-danger');
+        $( '#start_season_button' ).removeClass( 'btn-success' ).addClass( 'btn-danger' );
       };
 
-      $(this).closest('tr').remove(); //removes team from standings table
-    }); //end delete function
+      $( this ).closest( 'tr' ).remove(  ); //removes team from standings table
+    } ); //end delete function
 
     //===========================================================
     //             ** END DELETE TEAM CLICK EVENT **
@@ -399,91 +399,91 @@
     //                 ** PAGE LOAD FUNCTIONS **
     //===========================================================
 
-    function pageLoad () {  
+    function pageLoad (  ) {  
 
       // retrieve game data from the server
-      $.ajax({
+      $.ajax( {
         type: 'GET',
         url: '/backliftapp/results',
-        success: function (data) {
+        success: function ( data ) {
 
           // update results array
           results_array = data;
 
           // retrieve team data from server
-          $.ajax({
+          $.ajax( {
             type: 'GET', 
             url: '/backliftapp/team', 
-            success: function (data) {
+            success: function ( data ) {
 
               // update league array
               league_array = data;
 
               // clear standings table
-              $('#standings').html('');
+              $( '#standings' ).html( '' );
 
               // populate standings table
-              printTeam(league_array);
+              printTeam( league_array );
 
               // initialize table sorter
-              // sortTable();
+              // sortTable(  );
 
               // change start season button color based on league size
-              if (league_array.length >= 4) {
-                $('#start_season_button').removeClass('btn-danger').addClass('btn-success');      
+              if ( league_array.length >= 4 ) {
+                $( '#start_season_button' ).removeClass( 'btn-danger' ).addClass( 'btn-success' );      
               } else {
-                $('#start_season_button').removeClass('btn-success').addClass('btn-danger');
+                $( '#start_season_button' ).removeClass( 'btn-success' ).addClass( 'btn-danger' );
               };
 
               // populate schedule table
-              scheduleWrite();
+              scheduleWrite(  );
 
               // populate weeks menue in enter scores modal
-              weekPop();
+              weekPop(  );
 
               // populate enter scores modal
-              enterScoresPop();
+              enterScoresPop(  );
 
             }
-          }); // end GET
+          } ); // end GET
 
         }
-      }); // end GET
+      } ); // end GET
 
       // retrieve season data from server
-      $.ajax({
+      $.ajax( {
         type: 'GET', 
         url: '/backliftapp/start/555a8344-2396-4f08-9202-5c1a74f6b494',
-        success: function (data) {
+        success: function ( data ) {
 
           // fill variable with season data
           var season = data;
 
           // determine if season is in progress
-          if (season.trigger === "on") {
+          if ( season.trigger === "on" ) {
 
             // write message to header
-            $('<h4>This season is LIVE!</h4>').appendTo('#header');
+            $( '<h4>This season is LIVE!</h4>' ).appendTo( '#header' );
 
             // hide delete button
-            $('body').addClass('nix_is_hidden');
+            $( 'body' ).addClass( 'nix_is_hidden' );
 
             // hide create team button
-            $('#create_team_button').hide();
+            $( '#create_team_button' ).hide(  );
 
             // hide start season button
-            $('#start_season_button').hide();
+            $( '#start_season_button' ).hide(  );
 
             // show enter scores button
-            $('#enter_scores_button').show();
+            $( '#enter_scores_button' ).show(  );
 
             // show reset season button
-            $('#reset_season_button').show();
+            $( '#reset_season_button' ).show(  );
 
           }; // end if statement
 
         }
-      }); // end GET
+      } ); // end GET
 
     }; // end pageLoad
 
@@ -496,34 +496,34 @@
     //===========================================================
 
     // populate standings table on page load or refresh; contains popover
-    function printTeam(league_array){
-      for (var index = 0; index < league_array.length; index++) { 
+    function printTeam( league_array ){
+      for ( var index = 0; index < league_array.length; index++ ) { 
 
         // calculate and format win percentage
-        calcPer(league_array, index);
+        calcPer( league_array, index );
 
         // write league data to standings table
-        $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + league_array[index].teamName +'</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + league_array[index].firstName + " " + league_array[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + league_array[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + league_array[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + league_array[index].zip +'</td></tr></table>">' + league_array[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + league_array[index].id + '" data-index="' + index + '">&times;</button></td><td>' + league_array[index].wins + '</td><td>' + league_array[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
+        $( '<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + league_array[index].teamName +'</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + league_array[index].firstName + " " + league_array[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + league_array[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + league_array[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + league_array[index].zip +'</td></tr></table>">' + league_array[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + league_array[index].id + '" data-index="' + index + '">&times;</button></td><td>' + league_array[index].wins + '</td><td>' + league_array[index].losses + '</td><td>' + win_per + '</td></tr>' ).appendTo( '#standings' );
           };
 
     }; // end printTeam
 
 
-    function calcPer(league_array, index){
+    function calcPer( league_array, index ){
 
       // set initial values
       var raw_per = 0;
       var per_toArray = 0;
 
       // calculate win percentage to 3 decimal places
-      raw_per = (+league_array[index].wins/(+league_array[index].wins + +league_array[index].losses)).toFixed(3);
+      raw_per = ( +league_array[index].wins/( +league_array[index].wins + +league_array[index].losses ) ).toFixed( 3 );
 
       // format win percentage
-      if (raw_per < 1) { // if less than 0, omit pre-decimal 0
-        per_toArray = raw_per.toString().split('.');
+      if ( raw_per < 1 ) { // if less than 0, omit pre-decimal 0
+        per_toArray = raw_per.toString(  ).split( '.' );
         win_per = '.' + per_toArray[1];
       }
-      else if (isNaN(raw_per)) { // if NaN, write .000
+      else if ( isNaN( raw_per ) ) { // if NaN, write .000
         win_per = ".000";
       }
       else { // if 1, display full number
@@ -534,13 +534,13 @@
 
 
     // add row to table when team is added; contains popover
-    function lineWrite(team) {
+    function lineWrite( team ) {
 
       // fill variable with total number of teams
       var index = league_array.length;
 
       // write new team to the standings table
-      $('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $('#teamName').val() + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $('#mgr_fname').val() + " " + $('#mgr_lname').val() + '</td></tr><tr><td>Phone:</td><td>' + $('#phoneNumber').val() + '</td></tr><tr><td>Sponsor:</td><td>' + $('#sponsor').val() + '</td></tr><tr><td>Zip:</td><td> 37' + $('#zip').val() +'</td></tr></table>">' + $('#teamName').val() + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + (index + 1) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>').appendTo('#standings');
+      $( '<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + $( '#teamName' ).val(  ) + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager:</td><td>' + $( '#mgr_fname' ).val(  ) + " " + $( '#mgr_lname' ).val(  ) + '</td></tr><tr><td>Phone:</td><td>' + $( '#phoneNumber' ).val(  ) + '</td></tr><tr><td>Sponsor:</td><td>' + $( '#sponsor' ).val(  ) + '</td></tr><tr><td>Zip:</td><td> 37' + $( '#zip' ).val(  ) +'</td></tr></table>">' + $( '#teamName' ).val(  ) + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + ( index + 1 ) + '" data-index="' + index + '">&times;</button></td><td>0</td><td>0</td><td>.000</td></tr>' ).appendTo( '#standings' );
 
     }; //end lineWrite
 
@@ -553,23 +553,23 @@
     //===========================================================
 
     // clear form fields
-    function clearForm(){
-      $('.team_inputs').each(function(){
-        $(this).val('');
-      });
+    function clearForm(  ){
+      $( '.team_inputs' ).each( function(  ){
+        $( this ).val( '' );
+      } );
     }; //end clearForm
 
     // reset form validation
-    function validateClear() {
-      $('.control-group').removeClass('success error');
-      validate.resetForm();
+    function validateClear(  ) {
+      $( '.control-group' ).removeClass( 'success error' );
+      validate.resetForm(  );
     }; //end validateClear
 
     // // sort table when new team is created
-    // function sortTable() {
-    //   $("#mytable").trigger("update"); 
+    // function sortTable(  ) {
+    //   $( "#mytable" ).trigger( "update" ); 
     //   var sorting = [0,0]; 
-    //   $("#mytable").trigger("sorton", [sorting]); 
+    //   $( "#mytable" ).trigger( "sorton", [sorting] ); 
     //   return false;
     // }; //end sortTable
 
@@ -581,65 +581,65 @@
     //               ** START SEASON FUNCTIONS **
     //===========================================================
 
-    function startSeason() { //starts season on click if league conditions are met (min 4 teams)
+    function startSeason(  ) { //starts season on click if league conditions are met ( min 4 teams )
 
       // determine if there are at least 4 teams
-      if (league_array.length >= 4) { // if league has more than 4 teams
+      if ( league_array.length >= 4 ) { // if league has more than 4 teams
 
         // prompt user to continue
-        var answer = confirm("Are you sure you want to start the season? There's no turning back!")
+        var answer = confirm( "Are you sure you want to start the season? There's no turning back!" )
 
-        if (answer){ // if affiramtive
+        if ( answer ){ // if affiramtive
 
           // show alert message
-          alert("Play ball!");
+          alert( "Play ball!" );
 
           // send data to the server
-          $.ajax({ 
+          $.ajax( { 
             url: "/backliftapp/start/555a8344-2396-4f08-9202-5c1a74f6b494",
             type: "PUT",
             dataType: "json",
             data: { 
               trigger: "on"
             }, 
-            success: function (data) {
+            success: function ( data ) {
 
-              console.log("Thrigger on!");
+              console.log( "Thrigger on!" );
 
               // write message to page header
-              $('<h4>This season is LIVE!</h4>').appendTo('#header');
+              $( '<h4>This season is LIVE!</h4>' ).appendTo( '#header' );
 
               // hide delete buttons
-              $('body').addClass('nix_is_hidden');
+              $( 'body' ).addClass( 'nix_is_hidden' );
 
               // hide start season button
-              $('#start_season_button').hide();
+              $( '#start_season_button' ).hide(  );
 
               // hide create team button
-              $('#create_team_button').hide();
+              $( '#create_team_button' ).hide(  );
 
               // show enter scores button
-              $('#enter_scores_button').show();
+              $( '#enter_scores_button' ).show(  );
 
               // show reset season button
-              $('#reset_season_button').show();
+              $( '#reset_season_button' ).show(  );
 
               // populate week menu of score modal
-              weekPop();
+              weekPop(  );
 
             }        
-          }); // end PUT
+          } ); // end PUT
         
         } else { // if negative
 
           // show alert message
-          alert("What, get cold feet?");
+          alert( "What, get cold feet?" );
         
         }; // end if statement
 
       } else { // if league has less than 4 teams
 
-        alert("You need at least 4 teams to start the season. Make some friends!");
+        alert( "You need at least 4 teams to start the season. Make some friends!" );
 
       }; // end if statement
 
@@ -654,62 +654,62 @@
     //===========================================================
 
     //adds slide toggle to schedule table
-    $('#schedule_table').on('click', '.slide_head', function() {
-      $(this).next('.slide_body').slideToggle();
-    });//end slide function
+    $( '#schedule_table' ).on( 'click', '.slide_head', function(  ) {
+      $( this ).next( '.slide_body' ).slideToggle(  );
+    } );//end slide function
 
-    function scheduleWrite() {
+    function scheduleWrite(  ) {
 
       // clear schedule table
-      $('#schedule_table').html(''); 
+      $( '#schedule_table' ).html( '' ); 
 
       // determine which schedule to use
-      if (league_array.length < 4) {
-        $('#schedule_table').hide(); // hide schedule table
+      if ( league_array.length < 4 ) {
+        $( '#schedule_table' ).hide(  ); // hide schedule table
         return false;
-      } else if (league_array.length === 4) {
-        $('#schedule_table').show(); // show schedule table
+      } else if ( league_array.length === 4 ) {
+        $( '#schedule_table' ).show(  ); // show schedule table
         sched = sched4;
-      } else if (league_array.length === 5 || league_array.length === 6) {
+      } else if ( league_array.length === 5 || league_array.length === 6 ) {
         sched = sched6;
       } else {
         sched = sched8;
       };
 
       // determine whether league has even or odd number of teams
-      if (league_array.length % 2 !== 0) { // if odd
-        writeSchedOdd(sched);
+      if ( league_array.length % 2 !== 0 ) { // if odd
+        writeSchedOdd( sched );
       } else { // if even
-        writeSchedEven(sched);
+        writeSchedEven( sched );
       };
 
     }; // end scheduleWrite
 
-    function writeSchedEven(sched) {    //writes schedule table head/calls write functions for even-# leagues (4,6,8 teams)
+    function writeSchedEven( sched ) {    //writes schedule table head/calls write functions for even-# leagues ( 4,6,8 teams )
 
       // determine if league has enough teams
-      if (league_array.length >= 4) {
+      if ( league_array.length >= 4 ) {
         
         // create empty tables
-        prepTable();
+        prepTable(  );
         
         // clear schedule table
-        $('#schedule_head' + i).html('');
-        $('#schedule_body' + i).html('');
+        $( '#schedule_head' + i ).html( '' );
+        $( '#schedule_body' + i ).html( '' );
         
         // loop through weeks in schedule
-        for (var i = 0; i < sched.length; i++) {
+        for ( var i = 0; i < sched.length; i++ ) {
           
           // write table head to schedule
-          $('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups</a></th></tr>').appendTo('#schedule_head' + i);
+          $( '<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + ( i + 1 ) + ' Matchups</a></th></tr>' ).appendTo( '#schedule_head' + i );
           
           // loop through games in week
-          for (var j = 0; j < sched[i].length; j++) {
+          for ( var j = 0; j < sched[i].length; j++ ) {
 
             var n = 1;         
             
             // write schedule data to empty tables
-            prepSched (i, j, n, results_array);
+            prepSched ( i, j, n, results_array );
           
           }; // end for loop   
         
@@ -719,31 +719,31 @@
 
     }; //end writeSchedEven
 
-    function writeSchedOdd(sched) {
+    function writeSchedOdd( sched ) {
 
       // determine if league has enough teams
-      if (league_array.length >= 4) {
+      if ( league_array.length >= 4 ) {
 
         // create empty tables
-        prepTable();
+        prepTable(  );
 
         // clear schedule table
-        $('#schedule_head' + i).html('');
-        $('#schedule_body' + i).html('');
+        $( '#schedule_head' + i ).html( '' );
+        $( '#schedule_body' + i ).html( '' );
 
         // loops through weeks in schedule
-        for (var i = 0; i < sched.length; i++) {
+        for ( var i = 0; i < sched.length; i++ ) {
 
           // write table head with bye week to schedule
-          $('<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + (i + 1) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">(Bye week: ' + league_array[sched[i][0][1] - 2].teamName + ')</span></a></th></tr>').appendTo('#schedule_head' + i);
+          $( '<tr style="background-color: #8dbdd8;"><th colspan="2"><a>Week ' + ( i + 1 ) + ' Matchups<br><span style="font-weight:200; font-size: 0.9em;">( Bye week: ' + league_array[sched[i][0][1] - 2].teamName + ' )</span></a></th></tr>' ).appendTo( '#schedule_head' + i );
 
           // loop through games in week
-          for (var j = 1; j < sched[i].length; j++) {
+          for ( var j = 1; j < sched[i].length; j++ ) {
 
             var n = 2;
 
             // write scheudle data to empty tables
-            prepSched (i, j, n, results_array);
+            prepSched ( i, j, n, results_array );
 
           }; // end for loop
         
@@ -754,23 +754,23 @@
     }; // end writeSchedOdd
 
     // create empty tables
-    function prepTable() {
-      for (var g = 0; g < sched.length; g++) {
-        $('<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g + '" class="slide_head"></thead><tbody class="slide_body" id="schedule_body' + g + '" style="display: none;"></tbody></table></div>').appendTo('#schedule_table');
+    function prepTable(  ) {
+      for ( var g = 0; g < sched.length; g++ ) {
+        $( '<div class="row-fluid"><table class="span12"><thead id="schedule_head' + g + '" class="slide_head"></thead><tbody class="slide_body" id="schedule_body' + g + '" style="display: none;"></tbody></table></div>' ).appendTo( '#schedule_table' );
       }; 
     }; //end prepTable function
 
-    function prepSched(i, j, n) { // appends schedule info into prepped table for schedWrite function
+    function prepSched( i, j, n ) { // appends schedule info into prepped table for schedWrite function
 
       // create empty variables
       var score_grab1 = 'TBA';
       var score_grab2 = 'TBA';
 
       // loop through games in results array
-      $.each(results_array, function(index){
+      $.each( results_array, function( index ){
 
         // determine if teams IDs correspond with unique game identifier
-        if ((league_array[sched[i][j][0] - n].id + league_array[sched[i][j][1] - n].id) == results_array[index].gameId) {
+        if ( ( league_array[sched[i][j][0] - n].id + league_array[sched[i][j][1] - n].id ) == results_array[index].gameId ) {
 
           // fill variables with contents of form inputs
           score_grab1 = results_array[index].score1;
@@ -778,16 +778,16 @@
 
         }; // end if statement
       
-      }); // end each
+      } ); // end each
 
       // write game header to schedule
-      $('<tr style="background-color: #e6EEEE;"><td colspan="2">' + league_array[sched[i][j][0] - n].teamName + " vs. " + league_array[sched[i][j][1] - n].teamName + "</td></tr>").appendTo('#schedule_body' + i);
+      $( '<tr style="background-color: #e6EEEE;"><td colspan="2">' + league_array[sched[i][j][0] - n].teamName + " vs. " + league_array[sched[i][j][1] - n].teamName + "</td></tr>" ).appendTo( '#schedule_body' + i );
 
       // write home team name and score to schedule
-      $('<tr><td>' + league_array[sched[i][j][0] - n].teamName + '</td><td>' + score_grab1 + '</td></tr>').appendTo('#schedule_body' + i);
+      $( '<tr><td>' + league_array[sched[i][j][0] - n].teamName + '</td><td>' + score_grab1 + '</td></tr>' ).appendTo( '#schedule_body' + i );
 
       // write away team name and score to schedule
-      $('<tr><td>' + league_array[sched[i][j][1] - n].teamName + '</td><td>' + score_grab2 + '</td></tr>').appendTo('#schedule_body' + i);
+      $( '<tr><td>' + league_array[sched[i][j][1] - n].teamName + '</td><td>' + score_grab2 + '</td></tr>' ).appendTo( '#schedule_body' + i );
 
     }; //end prepSched function
 
@@ -800,36 +800,36 @@
     //===========================================================
 
     // populate week selector in enter scores modal
-    function weekPop() {
+    function weekPop(  ) {
 
       // clear week selector
-      $('#week_selector').html('');
-      $('#week_selector').prepend('<option>Select:</option>');  
+      $( '#week_selector' ).html( '' );
+      $( '#week_selector' ).prepend( '<option>Select:</option>' );  
 
       // determine if any games have been played
-      if (results_array.length === 0) { 
+      if ( results_array.length === 0 ) { 
 
         // loop through the 
-        $.each(sched, function(index){
+        $.each( sched, function( index ){
           var dynIndex = index + 1;
-          $('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
-        });
+          $( '#week_selector' ).append( $( "<option></option>" ).attr( "value", index ).text( "Week " + dynIndex ) );
+        } );
 
       } else { // limits weeks selector to weeks that haven't already been entered.
 
         var index; 
 
-        if (league_array.length === 4 || league_array.length === 5) {
-          index = (results_array.length/2);
-        } else if (league_array.length === 6 || league_array.length === 7) {
-          index = (results_array.length/3);
+        if ( league_array.length === 4 || league_array.length === 5 ) {
+          index = ( results_array.length/2 );
+        } else if ( league_array.length === 6 || league_array.length === 7 ) {
+          index = ( results_array.length/3 );
         } else {
-          index = (results_array.length/4);
+          index = ( results_array.length/4 );
         };
 
-        while (index < sched.length) {
+        while ( index < sched.length ) {
           var dynIndex = index + 1;
-          $('#week_selector').append($("<option></option>").attr("value", index).text("Week " + dynIndex));
+          $( '#week_selector' ).append( $( "<option></option>" ).attr( "value", index ).text( "Week " + dynIndex ) );
           index++;
         };
 
@@ -837,63 +837,63 @@
     }; //end weekPop function
 
     // populate enter scores modal
-    function enterScoresPop () {
-      $('#week_selector').change(function(){
-        $('#game_scores').html('');
+    function enterScoresPop (  ) {
+      $( '#week_selector' ).change( function(  ){
+        $( '#game_scores' ).html( '' );
         var selectedItem, gameList;
-        selectedItem = $(this).val(); //no. 0-6
+        selectedItem = $( this ).val(  ); //no. 0-6
         gameList = sched[selectedItem];
-        if (league_array.length % 2 === 0) { //even
+        if ( league_array.length % 2 === 0 ) { //even
           var count = 1;
-          for (var index = 0; index < gameList.length; index++) {
+          for ( var index = 0; index < gameList.length; index++ ) {
             var n = 1;      
 
             // add form inputs to score modal
-            prepScores(n, index, gameList, count);
+            prepScores( n, index, gameList, count );
 
             count += 2;
           };
         } else { //odd
-          $('#bye_announce').text('');
-          $('<h4 style="font-weight: 200; margin: 3px 0;">Bye week: ' + league_array[gameList[0][1] - 2].teamName + '</h4>').appendTo('#bye_announce');
-          $('<input id="week_grab" value="' + (parseInt(selectedItem) + 1) + '" style="display: none;">').appendTo('#bye_announce')
+          $( '#bye_announce' ).text( '' );
+          $( '<h4 style="font-weight: 200; margin: 3px 0;">Bye week: ' + league_array[gameList[0][1] - 2].teamName + '</h4>' ).appendTo( '#bye_announce' );
+          $( '<input id="week_grab" value="' + ( parseInt( selectedItem ) + 1 ) + '" style="display: none;">' ).appendTo( '#bye_announce' )
           var count = 1;
-          for (var index = 1; index < gameList.length; index++) {
+          for ( var index = 1; index < gameList.length; index++ ) {
             var n = 2;    
-            prepScores(n, index, gameList, count);
+            prepScores( n, index, gameList, count );
             count += 2;
           };  
         }; // end if statment
-      }); // end change
+      } ); // end change
     };//end enterScoresPop
 
-    function prepScores (n, index, gameList, count) { //appends game lists for enter scores modal based on week selected
+    function prepScores ( n, index, gameList, count ) { //appends game lists for enter scores modal based on week selected
 
       // create empty div for games
-      $('<div id="game_group' + index + '" class="game_wraps"></div>').appendTo('#game_scores');
+      $( '<div id="game_group' + index + '" class="game_wraps"></div>' ).appendTo( '#game_scores' );
 
       // write team names to div
-      $('<h4 style="text-align: center;">' + league_array[gameList[index][0] - n].teamName + ' vs. ' + league_array[gameList[index][1] - n].teamName + '</h4>').appendTo('#game_group' + index);
+      $( '<h4 style="text-align: center;">' + league_array[gameList[index][0] - n].teamName + ' vs. ' + league_array[gameList[index][1] - n].teamName + '</h4>' ).appendTo( '#game_group' + index );
 
       // add home team score input to div
-      $('<div class="control-group"><label class="control-label score_labels" for="sponsor">' + league_array[gameList[index][0] - n].teamName + '</label><div class="controls"><input type="text" class="score_inputs score_entry" id="team_' + count + '" name="team_one_score" placeholder="Score"><input id="id_' + count + '" class="score_inputs" value="' + league_array[gameList[index][0] - n].id + '" style="display: none;"></div></div>').appendTo('#game_group' + index);
+      $( '<div class="control-group"><label class="control-label score_labels" for="sponsor">' + league_array[gameList[index][0] - n].teamName + '</label><div class="controls"><input type="text" class="score_inputs score_entry" id="team_' + count + '" name="team_one_score" placeholder="Score"><input id="id_' + count + '" class="score_inputs" value="' + league_array[gameList[index][0] - n].id + '" style="display: none;"></div></div>' ).appendTo( '#game_group' + index );
 
       // add away team score input to div
-      $('<div class="control-group" style="margin-top: -10px;"><label class="control-label score_labels" for="team_two_score">' + league_array[gameList[index][1] - n].teamName + '</label><div class="controls"><input type="text" class="score_inputs score_entry" id="team_' + (count + 1) + '" name="team_two_score" placeholder="Score"><input id="id_' + (count + 1) + '" class="score_inputs" value="' + league_array[gameList[index][1] - n].id + '" style="display: none;"></div></div>').appendTo('#game_group' + index);
+      $( '<div class="control-group" style="margin-top: -10px;"><label class="control-label score_labels" for="team_two_score">' + league_array[gameList[index][1] - n].teamName + '</label><div class="controls"><input type="text" class="score_inputs score_entry" id="team_' + ( count + 1 ) + '" name="team_two_score" placeholder="Score"><input id="id_' + ( count + 1 ) + '" class="score_inputs" value="' + league_array[gameList[index][1] - n].id + '" style="display: none;"></div></div>' ).appendTo( '#game_group' + index );
 
     }; //end prepScores func
 
-    function assignWLs (data) {
+    function assignWLs ( data ) {
       var chop, teams, team1, team2;
 
       chop = data.gameId;
-      teams = chop.toString().split('');
+      teams = chop.toString(  ).split( '' );
       team1 = teams[0];
       team2 = teams[1];
 
-      if (data.score1 > data.score2) {
+      if ( data.score1 > data.score2 ) {
         //get win total, add one, send back
-        $.ajax({
+        $.ajax( {
             url: "backliftapp/team/" + team1,
           type: "PUT",
           dataType: "json",
@@ -901,39 +901,39 @@
             wins: +league_array[team1 - 1].wins + 1 
           },
           //get loss total, add one, send back
-          success: function () {
-            $.ajax({  
+          success: function (  ) {
+            $.ajax( {  
                 url: "backliftapp/team/" + team2,
               type: "PUT",
               dataType: "json",
               data: { 
                 losses: +league_array[team2 - 1].losses + 1 
               },
-            }); //end PUT
+            } ); //end PUT
           }
-        }); //end PUT     
+        } ); //end PUT     
       } 
       else {
         //get loss total, add one, send back
-        $.ajax({
+        $.ajax( {
             url: "backliftapp/team/" + team1,
           type: "PUT",
           dataType: "json",
           data: { 
             losses: +league_array[team1 - 1].losses + 1 
           },  
-          success: function() {
+          success: function(  ) {
             //get win total, add one, send back
-            $.ajax({  
+            $.ajax( {  
                 url: "backliftapp/team/" + team2,
               type: "PUT",
               dataType: "json",
               data: { 
                 wins: +league_array[team2 - 1].wins + 1 
               },
-            }); //end PUT
+            } ); //end PUT
           }
-        }); //end PUT
+        } ); //end PUT
       }
     }; //end assign WLs func
 
@@ -946,85 +946,85 @@
     //                ** RESTART SEASON FUNCTION **
     //===========================================================
 
-    function resetSeason () {
+    function resetSeason (  ) {
 
       // retrieve game data from server
-      $.ajax({
+      $.ajax( {
         type: 'GET',
         url: '/backliftapp/results',
-        success: function (data) {
+        success: function ( data ) {
 
           // update results array
           results_array = data;
 
           // loop through results array
-          $.each(results_array, function(index){
+          $.each( results_array, function( index ){
 
             // fill variable with team ID
             var id = results_array[index].id;
 
             // delete game data from server
-            $.ajax({
+            $.ajax( {
               url: "backliftapp/results/" + id,
               type: "DELETE",
               dataType: "json"
-            });
+            } );
 
-          }); // end each       
+          } ); // end each       
         
         }
-      }); // end GET   
+      } ); // end GET   
 
       // retrieves season data from server
-      $.ajax({
+      $.ajax( {
         type: "PUT",
         url: "/backliftapp/start/555a8344-2396-4f08-9202-5c1a74f6b494",
         dataType: "JSON",
         data: {
           trigger: "off"
         },
-        success: function (data) {
+        success: function ( data ) {
 
-          console.log("Trigger off!");
+          console.log( "Trigger off!" );
 
           // clear header
-          $('#header h4').text('');
+          $( '#header h4' ).text( '' );
 
           // show delete buttons
-          $('body').removeClass('nix_is_hidden');
+          $( 'body' ).removeClass( 'nix_is_hidden' );
 
           // show create team button
-          $('#create_team_button').show();
+          $( '#create_team_button' ).show(  );
 
           // show start season button
-          $('#start_season_button').show();
+          $( '#start_season_button' ).show(  );
 
           // hide enter scores button
-          $('#enter_scores_button').hide();
+          $( '#enter_scores_button' ).hide(  );
 
           // hide reset season button
-          $('#reset_season_button').hide();
+          $( '#reset_season_button' ).hide(  );
         
         }
-      }); // end GET
+      } ); // end GET
 
       // resets team wins and losses to 0
-      $.ajax({
+      $.ajax( {
         type: 'GET',
         url: '/backliftapp/team',
-        success: function (data) {
+        success: function ( data ) {
 
           // update league array
           league_array = data;
 
           // loop through league array
-          $.each(league_array, function(index){
+          $.each( league_array, function( index ){
 
             // fill variable with team ID
             var id = league_array[index].id;
 
             // reset wins and losses to 0
-            $.ajax({
+            $.ajax( {
               url: "backliftapp/team/" + id,
               type: "PUT",
               dataType: "json",
@@ -1032,22 +1032,22 @@
                 wins: 0,
                 losses: 0
               },
-              success: function () {
+              success: function (  ) {
         
                 // clear table contents
-                $('#standings').html('');
-                $('#table_schedule').html('');
+                $( '#standings' ).html( '' );
+                $( '#table_schedule' ).html( '' );
 
                 // reload page data
-                pageLoad();
+                pageLoad(  );
 
               }
-            }); // end PUT
+            } ); // end PUT
 
-          }); // end each
+          } ); // end each
 
         }
-      }); // end GET
+      } ); // end GET
 
     }; // end resetSeason
 
@@ -1055,7 +1055,7 @@
     //              ** END RESTART SEASON FUNCTION **
     //===========================================================
 
-  }); //end doc ready
+  } ); //end doc ready
   </script>
 </head>
 <body>
@@ -1201,12 +1201,12 @@
   <!-- inititalize popover -->
   <script type="text/javascript">
 
-    $('body').popover({
+    $( 'body' ).popover( {
       selector: '[rel=popover]',
       html:  true,
       trigger: 'hover',
       placement: 'bottom'
-    });
+    } );
 
   </script>
 </body>
