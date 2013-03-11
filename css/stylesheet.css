@@ -16,6 +16,10 @@ h1#title {
   color: #e6eeee;
 }
 
+h4#seasonStatus {
+  text-align: center;
+}
+
 div#main_content {
   height: 437px;
   background-color:rgba(255,255,255,0.6);
@@ -91,6 +95,7 @@ table#schedule_table th, table#schedule_table td {
 div#game_group>h4 {
   text-align: center;
 }
+
 /* FORM MODALS */
 
 div.modal-body {
@@ -132,6 +137,7 @@ label.error {
   padding: 2px 8px;
   margin-top: 2px;
 }
+
 div#tieErrorAlert {
   display: center;
   text-align: center;
