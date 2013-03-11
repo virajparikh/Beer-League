@@ -1,4 +1,16 @@
-####Phase 1
+Backlift url: https://dustinnssbeerleague-ud9pn.backliftapp.com/
+
+#### Jack and Viraj fixes:
+
+- Automatic refresh of week-by-week scores.
+
+- Before, Enter Scores modal did not show blue Save Scores button if there were 8 teams since it pushed the button below the screen - this is now fixed.
+
+- Validation now prevents incorrect form submit, and prevents ties.
+
+- Form validation now exists on the Score Submit.
+
+#### Phase 1:
 
 -using Bootstrap - done.
 
@@ -10,24 +22,20 @@
 
 -show team info on hover - working.
 
-####Phase 2
+#### Phase 2:
 
 -uses pre-defined schedule; differentiates automatically depending on league size. Accounts for bye week. Working.
 
 -capture scores by week: working. 
 
-*	On saving scores, Schedule and save scores modal update with MANUAL page refresh. Work in progress.
+*	On saving scores, both schedule and save scores modal NOW UPDATES AUTOMATICALLY.
 
 -Win/Loss calculated automatically on score entry, standings update dynamically without manual refresh.
 
--Standings sortable by column by manually clicking table head.
 
-##WHAT ISN'T WORKING --
+## WHAT ISN'T WORKING (even after re-factoring):
 
-*	After saving a round of scores, you __need to manually refresh page__. Everything is saved properly, but schedule table and save scores modal will not be properly updated until the next manual page refresh. 
+*	Table sort header function does not work properly
 
-*	If you delete a team from the middle of the teams list, score assignments will be off. Just don't delete a team from middle of field.
+*	Deleting any team except the last one results in score assignments to be off. 
 
-*	Validation not preventing form submit. 
-
-*	Score submit form has no current validation; does not prevent ties.
